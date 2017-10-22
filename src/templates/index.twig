@@ -1,0 +1,39 @@
+{#
+/**
+ * Shortcut plugin for Craft CMS 3.x
+ *
+ * Shortcut index.twig
+ *
+ * @author    Superbig
+ * @copyright Copyright (c) 2017 Superbig
+ * @link      https://superbig.co
+ * @package   Shortcut
+ * @since     1.0.0
+ */
+#}
+
+{% extends "_layouts/cp" %}
+{% import "_includes/forms" as forms %}
+
+{% do view.registerAssetBundle("superbig\\shortcut\\assetbundles\\shortcut\\ShortcutAsset") %}
+{% do view.registerAssetBundle("superbig\\shortcut\\assetbundles\\indexcpsection\\IndexCPSectionAsset") %}
+
+{% set docsUrl = "https://github.com/sjelfull/shortcut/blob/master/README.md" %}
+
+{% set title = "Shortcut" %}
+
+{% set pluginCpUrl = url('shortcut') %}
+
+{% set iconUrl = view.getAssetManager().getPublishedUrl('@superbig/shortcut/assetbundles/indexcpsection/dist', true) ~ '/img/Index-icon.svg' %}
+
+{% set extraPageHeaderHtml %}
+    <div class="buttons">
+        <a href="{{ pluginCpUrl }}" class="btn submit add icon">{{ "Click Me!"|t('shortcut') }}</a>
+    </div>
+{% endset %}
+
+{% set content %}
+    <h2>{{ "Index CP Section body goes here"|t('shortcut') }}</h2>
+    <img src="{{ iconUrl }}" height="64" width="64" />
+    <p class="textline"></p>
+{% endset %}

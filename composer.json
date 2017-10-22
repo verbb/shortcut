@@ -1,0 +1,51 @@
+{
+    "name": "superbig/shortcut",
+    "description": "Simple URL shortening",
+    "type": "craft-plugin",
+    "version": "1.0.0",
+    "keywords": [
+        "craft",
+        "cms",
+        "craftcms",
+        "craft-plugin",
+        "shortcut"
+    ],
+    "support": {
+        "docs": "https://github.com/sjelfull/shortcut/blob/master/README.md",
+        "issues": "https://github.com/sjelfull/shortcut/issues"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Superbig",
+            "homepage": "https://superbig.co"
+        }
+    ],
+    "require": {
+        "craftcms/cms": "~3.0.0-beta.23",
+        "hashids/hashids": "^2.0"
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+          "superbig\\shortcut\\": "src/"
+        }
+    },
+    "extra": {
+        "name": "Shortcut",
+        "handle": "shortcut",
+        "schemaVersion": "1.0.0",
+        "hasCpSettings": false,
+        "hasCpSection": true,
+        "changelogUrl": "https://raw.githubusercontent.com/sjelfull/shortcut/master/CHANGELOG.md",
+        "components": {
+            "shortcutService": "superbig\\shortcut\\services\\ShortcutService"
+        },
+        "class": "superbig\\shortcut\\Shortcut"
+    }
+}
