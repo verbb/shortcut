@@ -238,6 +238,27 @@ class ShortcutService extends Component
     }
 
     /**
+     * @return null|void
+     */
+    public function on404 ()
+    {
+        $code     = Craft::$app->request->getSegment(1);
+        $shortcut = $this->getByCode($code);
+
+        if ( $shortcut ) {
+            //ShortcutPlugin::log(Craft::t('Found matching shortcut {code}, redirecting to {url}', [ 'code' => $code, 'url' => $shortcut->getRealUrl() ]), LogLevel::Info, false);
+
+            $this->increaseHits($shortcut);
+
+            Craft::$app->response->redirect($shortcut->getRealUrl());
+
+            return Craft::$app->end();
+        }
+
+        return null;
+    }
+
+    /**
      * @param null $url
      *
      * @return string

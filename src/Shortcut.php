@@ -12,7 +12,9 @@ namespace superbig\shortcut;
 
 use craft\base\Element;
 use craft\events\ElementEvent;
+use craft\events\ExceptionEvent;
 use craft\services\Elements;
+use craft\web\ErrorHandler;
 use superbig\shortcut\models\Settings;
 use superbig\shortcut\services\ShortcutService as ShortcutServiceService;
 use superbig\shortcut\variables\ShortcutVariable;
@@ -24,6 +26,7 @@ use craft\events\PluginEvent;
 use craft\web\UrlManager;
 use craft\web\twig\variables\CraftVariable;
 use craft\events\RegisterUrlRulesEvent;
+use yii\web\HttpException;
 
 use yii\base\Event;
 
@@ -59,6 +62,7 @@ class Shortcut extends Plugin
 
         $urlSegment = $this->getSettings()->urlSegment ?: 's';
         $urlSegment = $urlSegment . '/<code:\w+>';
+        $request    = Craft::$app->getRequest();
 
         Event::on(
             UrlManager::class,
@@ -113,6 +117,10 @@ class Shortcut extends Plugin
             ),
             __METHOD__
         );
+
+        if ( $request->getIsSiteRequest() && !$request->getIsConsoleRequest() ) {
+            $this->handleSiteRequest();
+        }
     }
 
     // Protected Methods
@@ -121,6 +129,34 @@ class Shortcut extends Plugin
     protected function createSettingsModel ()
     {
         return new Settings();
+    }
+
+    protected function handleSiteRequest ()
+    {
+        Event::on(
+            ErrorHandler::class,
+            ErrorHandler::EVENT_BEFORE_HANDLE_EXCEPTION,
+            function (ExceptionEvent $event) {
+                Craft::trace(
+                    'ErrorHandler::EVENT_BEFORE_HANDLE_EXCEPTION',
+                    __METHOD__
+                );
+
+                $exception = $event->exception;
+
+                // If this is a Twig Runtime exception, use the previous one instead
+                if ( $exception instanceof \Twig_Error_Runtime &&
+                    ($previousException = $exception->getPrevious()) !== null ) {
+                    $exception = $previousException;
+                }
+
+                // If this is a 404 error, see if we can handle it
+                if ( $exception instanceof HttpException && $exception->statusCode === 404 ) {
+                    Shortcut::$plugin->shortcutService->on404();
+                }
+            }
+        );
+
     }
 
 }
