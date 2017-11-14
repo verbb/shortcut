@@ -12,6 +12,7 @@ namespace superbig\shortcut\models;
 
 use craft\helpers\UrlHelper;
 use craft\services\Elements;
+use yii\web\Response;
 use superbig\shortcut\Shortcut;
 
 use Craft;
@@ -105,10 +106,11 @@ class ShortcutModel extends Model
             return $this->url;
         }
         else {
-            $element = Craft::$app->elements->getElementById($this->elementId, null, $this->siteId);
+            $element = Craft::$app->elements->getElementById($this->elementId, $this->elementType, $this->siteId);
 
             if ( !$element ) {
-                throw new Exception(Craft::t('Could not find the url for element {id}', [ 'id' => $this->elementId ]));
+                throw new Exception(Craft::t('shortcut', 'Could not find the url for element {
+                    id}', [ 'id' => $this->elementId ]));
             }
 
             return $element->getUrl();
@@ -116,7 +118,7 @@ class ShortcutModel extends Model
     }
 
     /**
-     * @return $this
+     * @return Response
      */
     public function redirect ()
     {
