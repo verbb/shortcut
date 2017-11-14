@@ -41,7 +41,7 @@
         "handle": "shortcut",
         "schemaVersion": "1.0.0",
         "hasCpSettings": false,
-        "hasCpSection": true,
+        "hasCpSection": false,
         "changelogUrl": "https://raw.githubusercontent.com/sjelfull/craft3-shortcut/master/CHANGELOG.md",
         "components": {
             "shortcutService": "superbig\\shortcut\\services\\ShortcutService"
