@@ -85,11 +85,12 @@ class Install extends Migration
                     'uid'         => $this->uid(),
                     'siteId'      => $this->integer()->notNull(),
 
-                    'elementId' => $this->integer()->null()->defaultValue(null),
-                    'code'      => $this->string()->notNull()->defaultValue(''),
-                    'url'       => $this->string(400)->notNull()->defaultValue(''),
-                    'urlHash'   => $this->string(400)->notNull()->defaultValue(''),
-                    'hits'      => $this->integer()->notNull()->defaultValue(0),
+                    'elementId'   => $this->integer()->null()->defaultValue(null),
+                    'elementType' => $this->string()->null()->defaultValue(null),
+                    'code'        => $this->string()->notNull()->defaultValue(''),
+                    'url'         => $this->string(400)->notNull()->defaultValue(''),
+                    'urlHash'     => $this->string(400)->notNull()->defaultValue(''),
+                    'hits'        => $this->integer()->notNull()->defaultValue(0),
                 ]
             );
         }
@@ -112,6 +113,18 @@ class Install extends Migration
             'code',
             true
         );
+
+        $this->createIndex(
+            $this->db->getIndexName(
+                '{{%shortcut_shortcuts}}',
+                'urlHash',
+                true
+            ),
+            '{{%shortcut_shortcuts}}',
+            'urlHash',
+            true
+        );
+
         // Additional commands depending on the db driver
         switch ($this->driver) {
             case DbConfig::DRIVER_MYSQL:

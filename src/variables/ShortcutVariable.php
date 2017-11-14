@@ -10,6 +10,7 @@
 
 namespace superbig\shortcut\variables;
 
+use superbig\shortcut\models\ShortcutModel;
 use superbig\shortcut\Shortcut;
 
 use Craft;
@@ -25,15 +26,12 @@ class ShortcutVariable
     // =========================================================================
 
     /**
-     * @param null $optional
-     * @return string
+     * @param array $options
+     *
+     * @return ShortcutModel
      */
-    public function exampleVariable($optional = null)
+    public function get ($options = [])
     {
-        $result = "And away we go to the Twig template...";
-        if ($optional) {
-            $result = "I'm feeling optional today...";
-        }
-        return $result;
+        return Shortcut::$plugin->shortcutService->get($options);
     }
 }

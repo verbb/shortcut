@@ -1,4 +1,4 @@
-ﬁ<?php
+<?php
 /**
  * Shortcut plugin for Craft CMS 3.x
  *
@@ -37,29 +37,22 @@ class DefaultController extends Controller
     // =========================================================================
 
     /**
+     * @param null $code
+     *
      * @return mixed
      */
-    public function actionIndex ()
+    public function actionGet ($code = null)
     {
-        if ( isset($variables['code']) ) {
-            $shortcut = Shortcut::$plugin->shortcutService->getByCode($variables['code']);
+        if ( isset($code) ) {
+            $shortcut = Shortcut::$plugin->shortcutService->getByCode($code);
 
             if ( $shortcut ) {
-                craft()->shortcut->increaseHits($shortcut);
-                $this->redirect($shortcut->getRealUrl());
+                Shortcut::$plugin->shortcutService->increaseHits($shortcut);
+
+                return $this->redirect($shortcut->getRealUrl());
             }
         }
 
-        $this->redirect('/');
-    }
-
-    /**
-     * @return mixed
-     */
-    public function actionDoSomething ()
-    {
-        $result = 'Welcome to the DefaultController actionDoSomething() method';
-
-        return $result;
+        return $this->redirect('/');
     }
 }

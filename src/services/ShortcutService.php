@@ -40,7 +40,7 @@ class ShortcutService extends Component
             $element = $options['element'];
 
             // Check if we have one
-            $shortcut = $this->getByElementId($element->id, $element->locale);
+            $shortcut = $this->getByElementId($element->id, $element->siteId);
 
             // If not, create one
             if ( !$shortcut ) {
@@ -81,8 +81,8 @@ class ShortcutService extends Component
             $url     = $element->getUrl();
 
             $model->elementId   = $element->id;
-            $model->elementType = $element->getElementType();
-            $model->locale      = $element->locale;
+            $model->elementType = get_class($element);
+            $model->siteId      = $element->siteId;
             $model->url         = $url;
             $model->urlHash     = $this->_hashForUrl($url);
         }
@@ -101,7 +101,7 @@ class ShortcutService extends Component
     /**
      * @param null $id
      *
-     * @return null
+     * @return null|ShortcutModel
      */
     public function getById ($id = null)
     {
@@ -117,7 +117,7 @@ class ShortcutService extends Component
     /**
      * @param null $code
      *
-     * @return null
+     * @return null|ShortcutModel
      */
     public function getByCode ($code = null)
     {
@@ -133,7 +133,7 @@ class ShortcutService extends Component
     /**
      * @param null $url
      *
-     * @return null
+     * @return null|ShortcutModel
      */
     public function getByUrl ($url = null): ShortcutModel
     {
@@ -150,13 +150,13 @@ class ShortcutService extends Component
 
     /**
      * @param null $id
-     * @param null $locale
+     * @param null $siteId
      *
      * @return ShortcutModel|null
      */
-    public function getByElementId ($id = null, $locale = null)
+    public function getByElementId ($id = null, $siteId = null)
     {
-        $record = ShortcutRecord::findOne([ 'elementId' => $id, 'locale' => $locale ]);
+        $record = ShortcutRecord::findOne([ 'elementId' => $id, 'siteId' => $siteId ]);
 
         if ( $record ) {
             return $this->_populateShortcut($record);
@@ -198,16 +198,13 @@ class ShortcutService extends Component
             $record->url         = $shortcut->url;
             $record->urlHash     = $shortcut->urlHash;
             $record->code        = $shortcut->code;
-            $record->locale      = $shortcut->locale;
+            $record->siteId      = $shortcut->siteId;
             $record->hits        = $shortcut->hits;
             $record->elementId   = $shortcut->elementId;
             $record->elementType = $shortcut->elementType;
 
-
             if ( $record->save() && empty($record->code) ) {
-                require_once dirname(__FILE__, 2) . '/vendor/autoload.php';
-
-                $hashids = new Hashids(Craft::$app -, 5);
+                $hashids = new Hashids(Craft::$app->security->generateRandomKey(), 5);
 
                 $code         = $hashids->encode($record->id);
                 $record->code = $code;
@@ -227,7 +224,7 @@ class ShortcutService extends Component
      */
     public function onSaveElement (Element $element)
     {
-        $shortcut = $this->getByElementId($element->id);
+        $shortcut = $this->getByElementId($element->id, $element->siteId);
 
         if ( $shortcut ) {
             // Check if we should update the url
@@ -257,10 +254,15 @@ class ShortcutService extends Component
      */
     private function _populateShortcut (ShortcutRecord $record)
     {
-        $model          = new ShortcutModel();
-        $model->url     = $record->url;
-        $model->urlHash = $record->urlHash;
-        $model->code    = $record->code;
+        $model              = new ShortcutModel();
+        $model->id          = $record->id;
+        $model->siteId      = $record->siteId;
+        $model->elementId   = $record->elementId;
+        $model->elementType = $record->elementType;
+        $model->hits        = $record->hits;
+        $model->url         = $record->url;
+        $model->urlHash     = $record->urlHash;
+        $model->code        = $record->code;
 
         return $model;
     }

@@ -10,6 +10,10 @@
 
 namespace superbig\shortcut;
 
+use craft\base\Element;
+use craft\events\ElementEvent;
+use craft\services\Elements;
+use superbig\shortcut\models\Settings;
 use superbig\shortcut\services\ShortcutService as ShortcutServiceService;
 use superbig\shortcut\variables\ShortcutVariable;
 
@@ -53,21 +57,24 @@ class Shortcut extends Plugin
         parent::init();
         self::$plugin = $this;
 
+        $urlSegment = $this->getSettings()->urlSegment ?: 's';
+        $urlSegment = $urlSegment . '/<code:\w+>';
+
         Event::on(
             UrlManager::class,
             UrlManager::EVENT_REGISTER_SITE_URL_RULES,
-            function (RegisterUrlRulesEvent $event) {
-                $event->rules['siteActionTrigger1'] = 'shortcut/default';
+            function (RegisterUrlRulesEvent $event) use ($urlSegment) {
+                $event->rules[ $urlSegment ] = 'shortcut/default/get';
             }
         );
 
-        Event::on(
+        /*Event::on(
             UrlManager::class,
             UrlManager::EVENT_REGISTER_CP_URL_RULES,
             function (RegisterUrlRulesEvent $event) {
                 $event->rules['cpActionTrigger1'] = 'shortcut/default/do-something';
             }
-        );
+        );*/
 
         Event::on(
             CraftVariable::class,
@@ -76,6 +83,16 @@ class Shortcut extends Plugin
                 /** @var CraftVariable $variable */
                 $variable = $event->sender;
                 $variable->set('shortcut', ShortcutVariable::class);
+            }
+        );
+
+        Event::on(
+            Elements::class,
+            Elements::EVENT_AFTER_SAVE_ELEMENT,
+            function (ElementEvent $event) {
+                if ( !$event->isNew ) {
+                    $this->shortcutService->onSaveElement($event->element);
+                }
             }
         );
 
@@ -100,5 +117,10 @@ class Shortcut extends Plugin
 
     // Protected Methods
     // =========================================================================
+
+    protected function createSettingsModel ()
+    {
+        return new Settings();
+    }
 
 }

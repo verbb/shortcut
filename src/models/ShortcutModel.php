@@ -28,6 +28,12 @@ class ShortcutModel extends Model
     // Public Properties
     // =========================================================================
 
+
+    /**
+     * @var integer|null
+     */
+    public $id = null;
+
     /**
      * @var string
      */
@@ -44,9 +50,24 @@ class ShortcutModel extends Model
     public $code = '';
 
     /**
-     * @var string
+     * @var integer
      */
     public $elementId;
+
+    /**
+     * @var string
+     */
+    public $elementType;
+
+    /**
+     * @var integer
+     */
+    public $siteId;
+
+    /**
+     * @var integer
+     */
+    public $hits = 0;
 
     // Public Methods
     // =========================================================================
@@ -67,14 +88,15 @@ class ShortcutModel extends Model
 
     public function getUrl ()
     {
-        $urlSegment   = Craft::$app->getConfig()->get('hideUrlSegment', 'shortcut') ? '' : (craft()->config->get('urlSegment', 'shortcut') ?: 's');
-        $customDomain = craft()->config->get('customDomain', 'shortcut');
+        $settings     = Shortcut::$plugin->getSettings();
+        $urlSegment   = $settings->hideUrlSegment ? '' : ($settings->urlSegment ?: 's');
+        $customDomain = $settings->customDomain;
 
         if ( !empty($customDomain) ) {
             return rtrim($customDomain, '/') . '/' . $this->code;
         }
 
-        return UrlHelper::getSiteUrl($urlSegment . '/' . $this->code);
+        return UrlHelper::siteUrl($urlSegment . '/' . $this->code);
     }
 
     public function getRealUrl ()
@@ -83,7 +105,7 @@ class ShortcutModel extends Model
             return $this->url;
         }
         else {
-            $element = Elements::getElementById($this->elementId, $this->elementType, $this->siteId);
+            $element = Craft::$app->elements->getElementById($this->elementId, null, $this->siteId);
 
             if ( !$element ) {
                 throw new Exception(Craft::t('Could not find the url for element {id}', [ 'id' => $this->elementId ]));

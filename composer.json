@@ -1,5 +1,5 @@
 {
-    "name": "superbig/shortcut",
+    "name": "superbig/craft3-shortcut",
     "description": "Simple URL shortening",
     "type": "craft-plugin",
     "version": "1.0.0",
@@ -11,8 +11,8 @@
         "shortcut"
     ],
     "support": {
-        "docs": "https://github.com/sjelfull/shortcut/blob/master/README.md",
-        "issues": "https://github.com/sjelfull/shortcut/issues"
+        "docs": "https://github.com/sjelfull/craft3-shortcut/blob/master/README.md",
+        "issues": "https://github.com/sjelfull/craft3-shortcut/issues"
     },
     "license": "MIT",
     "authors": [
@@ -42,7 +42,7 @@
         "schemaVersion": "1.0.0",
         "hasCpSettings": false,
         "hasCpSection": true,
-        "changelogUrl": "https://raw.githubusercontent.com/sjelfull/shortcut/master/CHANGELOG.md",
+        "changelogUrl": "https://raw.githubusercontent.com/sjelfull/craft3-shortcut/master/CHANGELOG.md",
         "components": {
             "shortcutService": "superbig\\shortcut\\services\\ShortcutService"
         },

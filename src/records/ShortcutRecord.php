@@ -19,6 +19,8 @@ use craft\db\ActiveRecord;
  * @author    Superbig
  * @package   Shortcut
  * @since     1.0.0
+ *
+ * @property int $siteId Site ID
  */
 class ShortcutRecord extends ActiveRecord
 {
@@ -28,7 +30,7 @@ class ShortcutRecord extends ActiveRecord
     /**
      * @inheritdoc
      */
-    public static function tableName()
+    public static function tableName ()
     {
         return '{{%shortcut_shortcuts}}';
     }
