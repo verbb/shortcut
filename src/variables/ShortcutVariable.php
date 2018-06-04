@@ -28,7 +28,7 @@ class ShortcutVariable
     /**
      * @param array $options
      *
-     * @return ShortcutModel
+     * @return ShortcutModel|null
      */
     public function get ($options = [])
     {

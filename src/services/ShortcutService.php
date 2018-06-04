@@ -36,6 +36,8 @@ class ShortcutService extends Component
      */
     public function get ($options = [])
     {
+        $shortcut = null;
+
         if ( isset($options['element']) ) {
             $element = $options['element'];
 
@@ -46,8 +48,6 @@ class ShortcutService extends Component
             if ( !$shortcut ) {
                 $shortcut = $this->create($options);
             }
-
-            return $shortcut;
         }
 
         if ( isset($options['url']) ) {
@@ -60,11 +60,9 @@ class ShortcutService extends Component
             if ( !$shortcut ) {
                 $shortcut = $this->create($options);
             }
-
-            return $shortcut;
         }
 
-        return null;
+        return $shortcut;
     }
 
     /**
@@ -90,6 +88,7 @@ class ShortcutService extends Component
         if ( isset($options['url']) ) {
             $url            = $options['url'];
             $model->url     = $url;
+            $model->siteId  = Craft::$app->getSites()->currentSite->id;
             $model->urlHash = $this->_hashForUrl($url);
         }
 
@@ -135,7 +134,7 @@ class ShortcutService extends Component
      *
      * @return null|ShortcutModel
      */
-    public function getByUrl ($url = null): ShortcutModel
+    public function getByUrl ($url = null)
     {
         $hash = $this->_hashForUrl($url);
 
