@@ -2,7 +2,7 @@
     "name": "superbig/craft3-shortcut",
     "description": "Simple URL shortening",
     "type": "craft-plugin",
-    "version": "2.0.0",
+    "version": "2.0.1",
     "keywords": [
         "craft",
         "cms",
@@ -22,7 +22,7 @@
         }
     ],
     "require": {
-        "craftcms/cms": "^3.0.0-beta.23",
+        "craftcms/cms": "^3.0.0",
         "hashids/hashids": "^2.0"
     },
     "repositories": [
