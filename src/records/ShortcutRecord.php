@@ -27,11 +27,13 @@ class ShortcutRecord extends ActiveRecord
     // Public Static Methods
     // =========================================================================
 
+    const TABLE_NAME = '{{%shortcut_shortcuts}}';
+
     /**
      * @inheritdoc
      */
-    public static function tableName ()
+    public static function tableName()
     {
-        return '{{%shortcut_shortcuts}}';
+        return static::TABLE_NAME;
     }
 }

@@ -11,7 +11,8 @@
 namespace superbig\shortcut\services;
 
 use craft\base\Element;
-use Hashids\Hashids;
+use craft\db\Query;
+use craft\helpers\StringHelper;
 use superbig\shortcut\models\ShortcutModel;
 use superbig\shortcut\records\ShortcutRecord;
 use superbig\shortcut\Shortcut;
@@ -34,30 +35,30 @@ class ShortcutService extends Component
      *
      * @return null|ShortcutModel|Shortcut
      */
-    public function get ($options = [])
+    public function get($options = [])
     {
         $shortcut = null;
 
-        if ( isset($options['element']) ) {
+        if (isset($options['element'])) {
             $element = $options['element'];
 
             // Check if we have one
             $shortcut = $this->getByElementId($element->id, $element->siteId);
 
             // If not, create one
-            if ( !$shortcut ) {
+            if (!$shortcut) {
                 $shortcut = $this->create($options);
             }
         }
 
-        if ( isset($options['url']) ) {
+        if (isset($options['url'])) {
             $url = $options['url'];
 
             // Check if we have one
             $shortcut = $this->getByUrl($url);
 
             // If not, create one
-            if ( !$shortcut ) {
+            if (!$shortcut) {
                 $shortcut = $this->create($options);
             }
         }
@@ -70,11 +71,11 @@ class ShortcutService extends Component
      *
      * @return ShortcutModel
      */
-    public function create ($options = [])
+    public function create($options = [])
     {
         $model = new ShortcutModel();
 
-        if ( isset($options['element']) ) {
+        if (isset($options['element'])) {
             $element = $options['element'];
             $url     = $element->getUrl();
 
@@ -85,7 +86,7 @@ class ShortcutService extends Component
             $model->urlHash     = $this->_hashForUrl($url);
         }
 
-        if ( isset($options['url']) ) {
+        if (isset($options['url'])) {
             $url            = $options['url'];
             $model->url     = $url;
             $model->siteId  = Craft::$app->getSites()->currentSite->id;
@@ -102,11 +103,11 @@ class ShortcutService extends Component
      *
      * @return null|ShortcutModel
      */
-    public function getById ($id = null)
+    public function getById($id = null)
     {
         $record = ShortcutRecord::findById($id);
 
-        if ( $record ) {
+        if ($record) {
             return $this->_populateShortcut($record);
         }
 
@@ -118,11 +119,11 @@ class ShortcutService extends Component
      *
      * @return null|ShortcutModel
      */
-    public function getByCode ($code = null)
+    public function getByCode($code = null)
     {
-        $record = ShortcutRecord::findOne([ 'code' => $code ]);
+        $record = ShortcutRecord::findOne(['code' => $code]);
 
-        if ( $record ) {
+        if ($record) {
             return $this->_populateShortcut($record);
         }
 
@@ -134,13 +135,13 @@ class ShortcutService extends Component
      *
      * @return null|ShortcutModel
      */
-    public function getByUrl ($url = null)
+    public function getByUrl($url = null)
     {
         $hash = $this->_hashForUrl($url);
 
-        $record = ShortcutRecord::findOne([ 'urlHash' => $hash ]);
+        $record = ShortcutRecord::findOne(['urlHash' => $hash]);
 
-        if ( $record ) {
+        if ($record) {
             return $this->_populateShortcut($record);
         }
 
@@ -153,11 +154,11 @@ class ShortcutService extends Component
      *
      * @return ShortcutModel|null
      */
-    public function getByElementId ($id = null, $siteId = null)
+    public function getByElementId($id = null, $siteId = null)
     {
-        $record = ShortcutRecord::findOne([ 'elementId' => $id, 'siteId' => $siteId ]);
+        $record = ShortcutRecord::findOne(['elementId' => $id, 'siteId' => $siteId]);
 
-        if ( $record ) {
+        if ($record) {
             return $this->_populateShortcut($record);
         }
 
@@ -167,7 +168,7 @@ class ShortcutService extends Component
     /**
      * @param ShortcutModel $shortcut
      */
-    public function increaseHits (ShortcutModel $shortcut)
+    public function increaseHits(ShortcutModel $shortcut)
     {
         $shortcut->hits = $shortcut->hits + 1;
 
@@ -177,16 +178,16 @@ class ShortcutService extends Component
     /**
      * @param ShortcutModel $shortcut
      */
-    public function saveShortcut (ShortcutModel &$shortcut)
+    public function saveShortcut(ShortcutModel &$shortcut)
     {
 
         $isNew = !$shortcut->id;
 
-        if ( $shortcut->validate() ) {
-            if ( !$isNew ) {
+        if ($shortcut->validate()) {
+            if (!$isNew) {
                 $record = ShortcutRecord::findOne($shortcut->id);
 
-                if ( !$record ) {
+                if (!$record) {
                     throw new Exception('No shortcut record with ID ' . $shortcut->id . ' was found.');
                 }
             }
@@ -202,14 +203,11 @@ class ShortcutService extends Component
             $record->elementId   = $shortcut->elementId;
             $record->elementType = $shortcut->elementType;
 
-            if ( $record->save() && empty($record->code) ) {
-                $hashids = new Hashids(Craft::$app->security->generateRandomKey(), 5);
+            if ($record->save() && empty($record->code)) {
+                $record->code = $this->getUniqueKey();
 
-                $code         = $hashids->encode($record->id);
-                $record->code = $code;
-
-                if ( $record->save() ) {
-                    $shortcut->code = $code;
+                if ($record->save()) {
+                    $shortcut->code = $record->code;
                 }
 
             }
@@ -221,14 +219,14 @@ class ShortcutService extends Component
     /**
      * @param Element $element
      */
-    public function onSaveElement (Element $element)
+    public function onSaveElement(Element $element)
     {
         $shortcut = $this->getByElementId($element->id, $element->siteId);
 
-        if ( $shortcut ) {
+        if ($shortcut) {
             // Check if we should update the url
 
-            if ( $element->getUrl() !== $shortcut->url ) {
+            if ($element->getUrl() !== $shortcut->url) {
                 $shortcut->url = $element->getUrl();
 
                 $this->saveShortcut($shortcut);
@@ -239,12 +237,12 @@ class ShortcutService extends Component
     /**
      * @return null|void
      */
-    public function on404 ()
+    public function on404()
     {
         $code     = Craft::$app->request->getSegment(1);
         $shortcut = $this->getByCode($code);
 
-        if ( $shortcut ) {
+        if ($shortcut) {
             //ShortcutPlugin::log(Craft::t('Found matching shortcut {code}, redirecting to {url}', [ 'code' => $code, 'url' => $shortcut->getRealUrl() ]), LogLevel::Info, false);
 
             $this->increaseHits($shortcut);
@@ -262,7 +260,7 @@ class ShortcutService extends Component
      *
      * @return string
      */
-    private function _hashForUrl ($url = null)
+    private function _hashForUrl($url = null)
     {
         return md5($url);
     }
@@ -272,7 +270,7 @@ class ShortcutService extends Component
      *
      * @return ShortcutModel
      */
-    private function _populateShortcut (ShortcutRecord $record)
+    private function _populateShortcut(ShortcutRecord $record)
     {
         $model              = new ShortcutModel();
         $model->id          = $record->id;
@@ -285,5 +283,33 @@ class ShortcutService extends Component
         $model->code        = $record->code;
 
         return $model;
+    }
+
+    public function getUniqueKey($code = null)
+    {
+        $unique = false;
+
+        if (!$code) {
+            var_dump($code);
+            $code = StringHelper::randomString(12);
+        }
+
+        while (!$unique) {
+            $check = (new Query())
+                ->from(ShortcutRecord::TABLE_NAME)
+                ->where([
+                    'code' => $code,
+                ])
+                ->exists();
+
+            if (!$check) {
+                $unique = true;
+            }
+            else {
+                $code = StringHelper::randomString(12);
+            }
+        }
+
+        return $code;
     }
 }

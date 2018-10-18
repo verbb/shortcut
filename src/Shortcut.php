@@ -49,13 +49,18 @@ class Shortcut extends Plugin
      */
     public static $plugin;
 
+    /**
+     * @var string
+     */
+    public $schemaVersion = '2.0.0';
+
     // Public Methods
     // =========================================================================
 
     /**
      * @inheritdoc
      */
-    public function init ()
+    public function init()
     {
         parent::init();
         self::$plugin = $this;
@@ -67,7 +72,7 @@ class Shortcut extends Plugin
         Event::on(
             UrlManager::class,
             UrlManager::EVENT_REGISTER_SITE_URL_RULES,
-            function (RegisterUrlRulesEvent $event) use ($urlSegment) {
+            function(RegisterUrlRulesEvent $event) use ($urlSegment) {
                 $event->rules[ $urlSegment ] = 'shortcut/default/get';
             }
         );
@@ -83,7 +88,7 @@ class Shortcut extends Plugin
         Event::on(
             CraftVariable::class,
             CraftVariable::EVENT_INIT,
-            function (Event $event) {
+            function(Event $event) {
                 /** @var CraftVariable $variable */
                 $variable = $event->sender;
                 $variable->set('shortcut', ShortcutVariable::class);
@@ -93,8 +98,8 @@ class Shortcut extends Plugin
         Event::on(
             Elements::class,
             Elements::EVENT_AFTER_SAVE_ELEMENT,
-            function (ElementEvent $event) {
-                if ( !$event->isNew ) {
+            function(ElementEvent $event) {
+                if (!$event->isNew) {
                     $this->shortcutService->onSaveElement($event->element);
                 }
             }
@@ -103,8 +108,8 @@ class Shortcut extends Plugin
         Event::on(
             Plugins::class,
             Plugins::EVENT_AFTER_INSTALL_PLUGIN,
-            function (PluginEvent $event) {
-                if ( $event->plugin === $this ) {
+            function(PluginEvent $event) {
+                if ($event->plugin === $this) {
                 }
             }
         );
@@ -113,12 +118,12 @@ class Shortcut extends Plugin
             Craft::t(
                 'shortcut',
                 '{name} plugin loaded',
-                [ 'name' => $this->name ]
+                ['name' => $this->name]
             ),
             __METHOD__
         );
 
-        if ( $request->getIsSiteRequest() && !$request->getIsConsoleRequest() ) {
+        if ($request->getIsSiteRequest() && !$request->getIsConsoleRequest()) {
             $this->handleSiteRequest();
         }
     }
@@ -126,17 +131,17 @@ class Shortcut extends Plugin
     // Protected Methods
     // =========================================================================
 
-    protected function createSettingsModel ()
+    protected function createSettingsModel()
     {
         return new Settings();
     }
 
-    protected function handleSiteRequest ()
+    protected function handleSiteRequest()
     {
         Event::on(
             ErrorHandler::class,
             ErrorHandler::EVENT_BEFORE_HANDLE_EXCEPTION,
-            function (ExceptionEvent $event) {
+            function(ExceptionEvent $event) {
                 Craft::trace(
                     'ErrorHandler::EVENT_BEFORE_HANDLE_EXCEPTION',
                     __METHOD__
@@ -145,13 +150,13 @@ class Shortcut extends Plugin
                 $exception = $event->exception;
 
                 // If this is a Twig Runtime exception, use the previous one instead
-                if ( $exception instanceof \Twig_Error_Runtime &&
-                    ($previousException = $exception->getPrevious()) !== null ) {
+                if ($exception instanceof \Twig_Error_Runtime &&
+                    ($previousException = $exception->getPrevious()) !== null) {
                     $exception = $previousException;
                 }
 
                 // If this is a 404 error, see if we can handle it
-                if ( $exception instanceof HttpException && $exception->statusCode === 404 ) {
+                if ($exception instanceof HttpException && $exception->statusCode === 404) {
                     Shortcut::$plugin->shortcutService->on404();
                 }
             }

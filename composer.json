@@ -2,7 +2,7 @@
     "name": "superbig/craft3-shortcut",
     "description": "Simple URL shortening",
     "type": "craft-plugin",
-    "version": "2.0.1",
+    "version": "2.0.2",
     "keywords": [
         "craft",
         "cms",
@@ -22,8 +22,7 @@
         }
     ],
     "require": {
-        "craftcms/cms": "^3.0.0",
-        "hashids/hashids": "^2.0"
+        "craftcms/cms": "^3.0.0"
     },
     "repositories": [
         {
@@ -39,7 +38,6 @@
     "extra": {
         "name": "Shortcut",
         "handle": "shortcut",
-        "schemaVersion": "1.0.0",
         "hasCpSettings": false,
         "hasCpSection": false,
         "changelogUrl": "https://raw.githubusercontent.com/sjelfull/craft3-shortcut/master/CHANGELOG.md",
