@@ -225,7 +225,6 @@ class ShortcutService extends Component
 
         if ($shortcut) {
             // Check if we should update the url
-
             if ($element->getUrl() !== $shortcut->url) {
                 $shortcut->url = $element->getUrl();
 
@@ -243,8 +242,6 @@ class ShortcutService extends Component
         $shortcut = $this->getByCode($code);
 
         if ($shortcut) {
-            //ShortcutPlugin::log(Craft::t('Found matching shortcut {code}, redirecting to {url}', [ 'code' => $code, 'url' => $shortcut->getRealUrl() ]), LogLevel::Info, false);
-
             $this->increaseHits($shortcut);
 
             Craft::$app->response->redirect($shortcut->getRealUrl());
@@ -290,7 +287,6 @@ class ShortcutService extends Component
         $unique = false;
 
         if (!$code) {
-            var_dump($code);
             $code = StringHelper::randomString(12);
         }
 
