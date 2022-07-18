@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.0.0 - 2022-06
+## 3.0.0 - 2022-07-18
 
 > {note} The plugin’s package name has changed to `verbb/shortcut`. Shortcut will need be updated to 3.0 from a terminal, by running `composer require verbb/shortcut && composer remove superbig/craft3-shortcut`.
 
