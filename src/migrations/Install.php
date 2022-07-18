@@ -1,176 +1,61 @@
 <?php
-/**
- * Shortcut plugin for Craft CMS 3.x
- *
- * Simple URL shortening
- *
- * @link      https://superbig.co
- * @copyright Copyright (c) 2017 Superbig
- */
-
-namespace superbig\shortcut\migrations;
-
-use superbig\shortcut\Shortcut;
+namespace verbb\shortcut\migrations;
 
 use Craft;
 use craft\config\DbConfig;
 use craft\db\Migration;
 
-/**
- * @author    Superbig
- * @package   Shortcut
- * @since     1.0.0
- */
 class Install extends Migration
 {
-    // Public Properties
-    // =========================================================================
-
-    /**
-     * @var string The database driver to use
-     */
-    public $driver;
-
     // Public Methods
     // =========================================================================
 
-    /**
-     * @inheritdoc
-     */
-    public function safeUp ()
+    public function safeUp(): bool
     {
-        $this->driver = Craft::$app->getConfig()->getDb()->driver;
-
-        if ( $this->createTables() ) {
-            $this->createIndexes();
-            $this->addForeignKeys();
-            // Refresh the db schema caches
-            Craft::$app->db->schema->refresh();
-            $this->insertDefaultData();
-        }
+        $this->createTables();
+        $this->createIndexes();
+        $this->addForeignKeys();
 
         return true;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function safeDown ()
+    public function safeDown(): bool
     {
-        $this->driver = Craft::$app->getConfig()->getDb()->driver;
         $this->removeTables();
 
         return true;
     }
 
-    // Protected Methods
-    // =========================================================================
-
-    /**
-     * @return bool
-     */
-    protected function createTables ()
+    public function createTables(): void
     {
-        $tablesCreated = false;
-
-        $tableSchema = Craft::$app->db->schema->getTableSchema('{{%shortcut_shortcuts}}');
-        if ( $tableSchema === null ) {
-            $tablesCreated = true;
-            $this->createTable(
-                '{{%shortcut_shortcuts}}',
-                [
-                    'id'          => $this->primaryKey(),
-                    'dateCreated' => $this->dateTime()->notNull(),
-                    'dateUpdated' => $this->dateTime()->notNull(),
-                    'uid'         => $this->uid(),
-                    'siteId'      => $this->integer()->notNull(),
-
-                    'elementId'   => $this->integer()->null()->defaultValue(null),
-                    'elementType' => $this->string()->null()->defaultValue(null),
-                    'code'        => $this->string()->notNull()->defaultValue(''),
-                    'url'         => $this->string(400)->notNull()->defaultValue(''),
-                    'urlHash'     => $this->string(400)->notNull()->defaultValue(''),
-                    'hits'        => $this->integer()->notNull()->defaultValue(0),
-                ]
-            );
-        }
-
-        return $tablesCreated;
+        $this->createTable('{{%shortcut_shortcuts}}', [
+            'id' => $this->primaryKey(),
+            'siteId' => $this->integer()->notNull(),
+            'elementId' => $this->integer()->null()->defaultValue(null),
+            'elementType' => $this->string()->null()->defaultValue(null),
+            'code' => $this->string()->notNull()->defaultValue(''),
+            'url' => $this->string(400)->notNull()->defaultValue(''),
+            'urlHash' => $this->string(400)->notNull()->defaultValue(''),
+            'hits' => $this->integer()->notNull()->defaultValue(0),
+            'dateCreated' => $this->dateTime()->notNull(),
+            'dateUpdated' => $this->dateTime()->notNull(),
+            'uid' => $this->uid(),
+        ]);
     }
 
-    /**
-     * @return void
-     */
-    protected function createIndexes ()
+    public function createIndexes(): void
     {
-        $this->createIndex(
-            $this->db->getIndexName(
-                '{{%shortcut_shortcuts}}',
-                'code',
-                true
-            ),
-            '{{%shortcut_shortcuts}}',
-            'code',
-            true
-        );
-
-        $this->createIndex(
-            $this->db->getIndexName(
-                '{{%shortcut_shortcuts}}',
-                'urlHash',
-                true
-            ),
-            '{{%shortcut_shortcuts}}',
-            'urlHash',
-            true
-        );
-
-        // Additional commands depending on the db driver
-        switch ($this->driver) {
-            case DbConfig::DRIVER_MYSQL:
-                break;
-            case DbConfig::DRIVER_PGSQL:
-                break;
-        }
+        $this->createIndex(null, '{{%shortcut_shortcuts}}', 'code', true);
+        $this->createIndex(null, '{{%shortcut_shortcuts}}', 'urlHash', true);
     }
 
-    /**
-     * @return void
-     */
-    protected function addForeignKeys ()
+    public function addForeignKeys(): void
     {
-        $this->addForeignKey(
-            $this->db->getForeignKeyName('{{%shortcut_shortcuts}}', 'siteId'),
-            '{{%shortcut_shortcuts}}',
-            'siteId',
-            '{{%sites}}',
-            'id',
-            'CASCADE',
-            'CASCADE'
-        );
-
-        $this->addForeignKey(
-            $this->db->getForeignKeyName('{{%shortcut_shortcuts}}', 'elementId'),
-            '{{%shortcut_shortcuts}}',
-            'elementId',
-            '{{%elements}}',
-            'id',
-            'CASCADE',
-            'CASCADE'
-        );
+        $this->addForeignKey(null, '{{%shortcut_shortcuts}}', 'siteId', '{{%sites}}', 'id', 'CASCADE', 'CASCADE');
+        $this->addForeignKey(null, '{{%shortcut_shortcuts}}', 'elementId', '{{%elements}}', 'id', 'CASCADE', 'CASCADE');
     }
 
-    /**
-     * @return void
-     */
-    protected function insertDefaultData ()
-    {
-    }
-
-    /**
-     * @return void
-     */
-    protected function removeTables ()
+    public function removeTables(): void
     {
         $this->dropTableIfExists('{{%shortcut_shortcuts}}');
     }

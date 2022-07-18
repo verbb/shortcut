@@ -1,8 +1,8 @@
 {
-    "name": "superbig/craft3-shortcut",
+    "name": "verbb/shortcut",
     "description": "Simple URL shortening",
     "type": "craft-plugin",
-    "version": "2.0.3",
+    "version": "3.0.0",
     "keywords": [
         "craft",
         "cms",
@@ -11,39 +11,36 @@
         "shortcut"
     ],
     "support": {
-        "docs": "https://github.com/sjelfull/craft3-shortcut/blob/master/README.md",
-        "issues": "https://github.com/sjelfull/craft3-shortcut/issues"
+        "email": "support@verbb.io",
+        "issues": "https://github.com/verbb/shortcut/issues?state=open",
+        "source": "https://github.com/verbb/shortcut",
+        "docs": "https://github.com/verbb/shortcut",
+        "rss": "https://github.com/verbb/shortcut/commits/v2.atom"
     },
     "license": "MIT",
     "authors": [
+        {
+            "name": "Verbb",
+            "homepage": "http://verbb.io"
+        },
         {
             "name": "Superbig",
             "homepage": "https://superbig.co"
         }
     ],
     "require": {
-        "craftcms/cms": "^3.0.0"
+        "craftcms/cms": "^3.7.0",
+        "verbb/base": "^1.0.2"
     },
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://asset-packagist.org"
-        }
-    ],
     "autoload": {
         "psr-4": {
-          "superbig\\shortcut\\": "src/"
+          "verbb\\shortcut\\": "src/"
         }
     },
     "extra": {
         "name": "Shortcut",
         "handle": "shortcut",
-        "hasCpSettings": false,
-        "hasCpSection": false,
-        "changelogUrl": "https://raw.githubusercontent.com/sjelfull/craft3-shortcut/master/CHANGELOG.md",
-        "components": {
-            "shortcutService": "superbig\\shortcut\\services\\ShortcutService"
-        },
-        "class": "superbig\\shortcut\\Shortcut"
+        "changelogUrl": "https://raw.githubusercontent.com/verbb/shortcut/craft-3/CHANGELOG.md",
+        "class": "verbb\\shortcut\\Shortcut"
     }
 }

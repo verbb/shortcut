@@ -1,42 +1,39 @@
-# Shortcut plugin for Craft CMS 3.x
-
-Simple URL shortening
-
-![Screenshot](resources/img/icon.png)
-
-## Requirements
-
-This plugin requires Craft CMS 3.0.0-beta.23 or later.
+# Shortcut plugin for Craft CMS
+Lets you create short links for elements or arbitrary URLs.
 
 ## Installation
+You can install Shortcut via the plugin store, or through Composer.
 
-To install the plugin, follow these instructions.
+### Craft Plugin Store
+To install **Shortcut**, navigate to the _Plugin Store_ section of your Craft control panel, search for `Shortcut`, and click the _Try_ button.
+
+### Composer
+You can also add the package to your project using Composer.
 
 1. Open your terminal and go to your Craft project:
 
         cd /path/to/project
 
 2. Then tell Composer to load the plugin:
-
-        composer require superbig/craft3-shortcut
+    
+        composer require verbb/shortcut
 
 3. In the Control Panel, go to Settings → Plugins and click the “Install” button for Shortcut.
 
-## Shortcut Overview
-
-Let's you create short links for elements or arbitrary URLs.
-
-## Using Shortcut
-
+## Usage
 To create a short url for a element:
+
 ```twig
 {% set shortcut = craft.shortcut.get({ element: entry }) %}
+
 {{ shortcut.getUrl() }}
 ```
 
 To create a short url for a url:
+
 ```twig
 {% set shortcut = craft.shortcut.get({ url: 'https://cnn.com' }) %}
+
 {{ shortcut.getUrl() }}
 ```
 
@@ -70,4 +67,14 @@ return [
 ];
 ```
 
-Brought to you by [Superbig](https://superbig.co)
+## Credits
+Originally created by the team at [Superbig](https://superbig.co/).
+
+## Show your Support
+Shortcut is licensed under the MIT license, meaning it will always be free and open source – we love free stuff! If you'd like to show your support to the plugin regardless, [Sponsor](https://github.com/sponsors/verbb) development.
+
+<h2></h2>
+
+<a href="https://verbb.io" target="_blank">
+    <img width="100" src="https://verbb.io/assets/img/verbb-pill.svg">
+</a>

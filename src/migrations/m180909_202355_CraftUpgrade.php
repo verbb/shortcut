@@ -1,44 +1,47 @@
 <?php
+namespace verbb\shortcut\migrations;
 
-namespace superbig\shortcut\migrations;
+use verbb\shortcut\Shortcut;
+use verbb\shortcut\records\Shortcut as ShortcutRecord;
 
 use Craft;
-use craft\db\Migration;
 use craft\db\Query;
 use craft\elements\Asset;
 use craft\elements\Entry;
 use craft\elements\User;
 use craft\models\Site;
-use superbig\shortcut\records\ShortcutRecord;
-use superbig\shortcut\Shortcut;
 
-/**
- * m180909_202355_CraftUpgrade migration.
- */
+use function is_callable;
+use Throwable;
+
 class m180909_202355_CraftUpgrade extends Install
 {
-    public $sites   = [];
+    // Properties
+    // =========================================================================
+
+    public $sites = [];
     public $siteMap = [];
 
-    /**
-     * @inheritdoc
-     */
-    public function safeUp()
+
+    // Public Methods
+    // =========================================================================
+
+    public function safeUp(): bool
     {
         $result = parent::safeUp();
 
-        $oldTable = Craft::$app->db->schema->getTableSchema('{{%shortcut}}');
+        $oldTable = Craft::$app->getDb()->schema->getTableSchema('{{%shortcut}}');
 
         // Convert
         if ($oldTable) {
-            $newTable    = ShortcutRecord::TABLE_NAME;
+            $newTable = ShortcutRecord::TABLE_NAME;
             $this->sites = Craft::$app->getSites()->getAllSites();
-            $siteMap     = [];
+            $siteMap = [];
             $transaction = Craft::$app->getDb()->beginTransaction();
 
             foreach ($this->sites as $site) {
                 /** @var $site Site */
-                $this->siteMap[ $site->handle ] = $site->id;
+                $this->siteMap[$site->handle] = $site->id;
             }
 
             $query = (new Query())
@@ -61,71 +64,59 @@ class m180909_202355_CraftUpgrade extends Install
                 $this->dropTableIfExists('{{%shortcut}}');
 
                 $transaction->commit();
-            } catch (\Exception $e) {
-                $transaction->rollBack();
-                throw $e;
-            } catch (\Throwable $e) {
+            } catch (Throwable $e) {
                 $transaction->rollBack();
                 throw $e;
             }
-
         }
 
         return $result;
     }
 
-    public function mapRecord($data = [])
+    public function mapRecord($data = []): array
     {
         $elementMap = [
             'Entry' => Entry::class,
             'Asset' => Asset::class,
-            'User'  => User::class,
+            'User' => User::class,
         ];
-        $newData    = [];
+
+        $newData = [];
         $removeKeys = [
             'id',
         ];
-        $keys       = [
+
+        $keys = [
             'locale' => 'siteId',
         ];
-        $transforms = [
-            'siteId'      => function($value) {
-                $siteId = $this->siteMap[ $value ] ?? $this->sites[0];
 
-                return $siteId;
+        $transforms = [
+            'siteId' => function($value) {
+                return $this->siteMap[$value] ?? $this->sites[0];
             },
             'elementType' => function($value) use ($elementMap) {
-                return $elementMap[ $value ] ?? $value;
+                return $elementMap[$value] ?? $value;
             },
-            'code'        => function($value) {
-                return Shortcut::$plugin->shortcutService->getUniqueKey($value);
+            'code' => function($value) {
+                return Shortcut::$plugin->getService()->getUniqueKey($value);
             },
         ];
 
         foreach ($data as $key => $value) {
-            $key             = $keys[ $key ] ?? $key;
-            $newData[ $key ] = $value;
-            $transform       = $transforms[ $key ] ?? null;
+            $key = $keys[$key] ?? $key;
+            $newData[$key] = $value;
+            $transform = $transforms[$key] ?? null;
 
-            if ($transform && \is_callable($transform)) {
-                $newData[ $key ] = $transform($value);
+            if ($transform && is_callable($transform)) {
+                $newData[$key] = $transform($value);
             }
         }
 
         foreach ($removeKeys as $key) {
-            unset($newData[ $key ]);
+            unset($newData[$key]);
         }
 
         return $newData;
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function safeDown()
-    {
-        $result = parent::safeDown();
-
-        return $result;
-    }
 }

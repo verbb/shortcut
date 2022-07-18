@@ -1,37 +1,16 @@
 <?php
-/**
- * Shortcut plugin for Craft CMS 3.x
- *
- * Simple URL shortening
- *
- * @link      https://superbig.co
- * @copyright Copyright (c) 2017 Superbig
- */
+namespace verbb\shortcut\variables;
 
-namespace superbig\shortcut\variables;
+use verbb\shortcut\Shortcut;
+use verbb\shortcut\models\Shortcut;
 
-use superbig\shortcut\models\ShortcutModel;
-use superbig\shortcut\Shortcut;
-
-use Craft;
-
-/**
- * @author    Superbig
- * @package   Shortcut
- * @since     1.0.0
- */
 class ShortcutVariable
 {
     // Public Methods
     // =========================================================================
 
-    /**
-     * @param array $options
-     *
-     * @return ShortcutModel|null
-     */
-    public function get ($options = [])
+    public function get(array $options = []): ?Shortcut
     {
-        return Shortcut::$plugin->shortcutService->get($options);
+        return Shortcut::$plugin->getService()->get($options);
     }
 }
