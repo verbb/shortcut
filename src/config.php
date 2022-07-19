@@ -9,4 +9,7 @@ return [
 
     // Set custom domain
     'customDomain' => 'https://cool.domain',
+
+    // Set the hash length
+    'hashLength' => 12,
 ];

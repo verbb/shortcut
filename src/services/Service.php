@@ -1,6 +1,7 @@
 <?php
 namespace verbb\shortcut\services;
 
+use verbb\shortcut\Shortcut as ShortcutPlugin;
 use verbb\shortcut\models\Shortcut;
 use verbb\shortcut\records\Shortcut as ShortcutRecord;
 
@@ -190,10 +191,12 @@ class Service extends Component
 
     public function getUniqueKey($code = null)
     {
+        $settings = ShortcutPlugin::$plugin->getSettings();
+
         $unique = false;
 
         if (!$code) {
-            $code = StringHelper::randomString(12);
+            $code = StringHelper::randomString($settings->hashLength);
         }
 
         while (!$unique) {
@@ -207,7 +210,7 @@ class Service extends Component
             if (!$check) {
                 $unique = true;
             } else {
-                $code = StringHelper::randomString(12);
+                $code = StringHelper::randomString($settings->hashLength);
             }
         }
 

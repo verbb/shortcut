@@ -67,6 +67,16 @@ return [
 ];
 ```
 
+You can also control the length of the unique hash generated using the `hashLength` option.
+
+```php
+<?php
+return [
+    // Set the hash length
+    'hashLength' => 12,
+];
+```
+
 ## Credits
 Originally created by the team at [Superbig](https://superbig.co/).
 

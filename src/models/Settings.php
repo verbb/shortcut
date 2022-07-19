@@ -23,6 +23,11 @@ class Settings extends Model
      */
     public $customDomain = '';
 
+    /**
+     * @var int
+     */
+    public $hashLength = 12;
+
 
     // Public Methods
     // =========================================================================
