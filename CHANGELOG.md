@@ -3,11 +3,11 @@
 ## 3.0.1 - 2022-07-19
 
 ### Added
-- Add `hashLength` plugin setting to control the length of generated hashes in URLs
+- Add `hashLength` plugin setting to control the length of generated hashes in URLs.
 
 ### Fixed
-- Fix an error when trying to generate a shortcut from a deleted element
-- Fix an error when generating shortcuts
+- Fix an error when trying to generate a shortcut from a deleted element.
+- Fix an error when generating shortcuts.
 
 ## 3.0.0 - 2022-07-18
 
