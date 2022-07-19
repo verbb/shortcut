@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.0.1 - 2022-07-19
+
+### Added
+- Add `hashLength` plugin setting to control the length of generated hashes in URLs
+
+### Fixed
+- Fix an error when trying to generate a shortcut from a deleted element
+- Fix an error when generating shortcuts
+
 ## 3.0.0 - 2022-07-18
 
 > {note} The plugin’s package name has changed to `verbb/shortcut`. Shortcut will need be updated to 3.0 from a terminal, by running `composer require verbb/shortcut && composer remove superbig/craft3-shortcut`.
