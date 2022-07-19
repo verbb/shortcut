@@ -1,7 +1,7 @@
 <?php
 namespace verbb\shortcut\models;
 
-use verbb\shortcut\Shortcut;
+use verbb\shortcut\Shortcut as ShortcutPlugin;
 
 use Craft;
 use craft\helpers\UrlHelper;
@@ -71,7 +71,7 @@ class Shortcut extends Model
 
     public function getUrl(): string
     {
-        $settings = Shortcut::$plugin->getSettings();
+        $settings = ShortcutPlugin::$plugin->getSettings();
         $urlSegment = $settings->hideUrlSegment ? '' : ($settings->urlSegment ?: 's');
         $customDomain = $settings->customDomain;
 

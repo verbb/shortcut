@@ -1,7 +1,7 @@
 <?php
 namespace verbb\shortcut\variables;
 
-use verbb\shortcut\Shortcut;
+use verbb\shortcut\Shortcut as ShortcutPlugin;
 use verbb\shortcut\models\Shortcut;
 
 class ShortcutVariable
@@ -11,6 +11,6 @@ class ShortcutVariable
 
     public function get(array $options = []): ?Shortcut
     {
-        return Shortcut::$plugin->getService()->get($options);
+        return ShortcutPlugin::$plugin->getService()->get($options);
     }
 }
