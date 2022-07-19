@@ -93,6 +93,10 @@ class Shortcut extends Plugin
                 $this->getService()->onSaveElement($event->element);
             }
         });
+
+        Event::on(Elements::class, Elements::EVENT_AFTER_DELETE_ELEMENT, function(ElementEvent $event) {
+            $this->getService()->onDeleteElement($event->element);
+        });
     }
 
     private function _handleSiteRequest(): void

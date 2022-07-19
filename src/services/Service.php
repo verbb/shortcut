@@ -9,6 +9,7 @@ use Craft;
 use craft\base\Component;
 use craft\base\Element;
 use craft\db\Query;
+use craft\helpers\Db;
 use craft\helpers\StringHelper;
 
 use yii\base\ExitException;
@@ -62,7 +63,7 @@ class Service extends Component
             $model->elementType = get_class($element);
             $model->siteId = $element->siteId;
             $model->url = $url;
-            $model->urlHash = $this->_hashForUrl($url);
+            $model->urlHash = $this->_hashForUrl($url, $model->elementId, $model->siteId);
         }
 
         if (isset($options['url'])) {
@@ -130,7 +131,7 @@ class Service extends Component
         $this->saveShortcut($shortcut);
     }
 
-    public function saveShortcut(Shortcut &$shortcut): void
+    public function saveShortcut(Shortcut $shortcut): void
     {
         $isNew = !$shortcut->id;
 
@@ -139,7 +140,7 @@ class Service extends Component
                 $record = ShortcutRecord::findOne($shortcut->id);
 
                 if (!$record) {
-                    throw new \Exception('No shortcut record with ID ' . $shortcut->id . ' was found.');
+                    throw new Exception('No shortcut record with ID ' . $shortcut->id . ' was found.');
                 }
             } else {
                 $record = new ShortcutRecord();
@@ -163,6 +164,13 @@ class Service extends Component
         }
     }
 
+    public function deleteShortcut(Shortcut $shortcut): void
+    {
+        Db::delete('{{%shortcut_shortcuts}}', [
+            'id' => $shortcut->id,
+        ]);
+    }
+
     public function onSaveElement(Element $element): void
     {
         $shortcut = $this->getByElementId($element->id, $element->siteId);
@@ -172,6 +180,15 @@ class Service extends Component
             $shortcut->url = $element->getUrl();
 
             $this->saveShortcut($shortcut);
+        }
+    }
+
+    public function onDeleteElement(Element $element): void
+    {
+        $shortcut = $this->getByElementId($element->id, $element->siteId);
+
+        if ($shortcut && $element->getUrl() === $shortcut->url) {
+            $this->deleteShortcut($shortcut);
         }
     }
 
@@ -221,9 +238,12 @@ class Service extends Component
     // Private Methods
     // =========================================================================
 
-    private function _hashForUrl($url = null): string
+    private function _hashForUrl($url = null, $elementId = null, $siteId = null): string
     {
-        return md5($url);
+        // Use all parts of info to generate a unique key
+        $parts = implode('-', array_filter([$url, $elementId, $siteId]));
+
+        return md5($parts);
     }
 
     private function _populateShortcut(ShortcutRecord $record): Shortcut
