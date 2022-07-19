@@ -8,11 +8,11 @@ use verbb\shortcut\records\Shortcut as ShortcutRecord;
 use Craft;
 use craft\base\Component;
 use craft\base\Element;
+use craft\base\ElementInterface;
 use craft\db\Query;
 use craft\helpers\Db;
 use craft\helpers\StringHelper;
 
-use yii\base\ExitException;
 use yii\base\Exception;
 
 class Service extends Component
@@ -126,7 +126,7 @@ class Service extends Component
 
     public function increaseHits(Shortcut $shortcut): void
     {
-        $shortcut->hits = $shortcut->hits + 1;
+        ++$shortcut->hits;
 
         $this->saveShortcut($shortcut);
     }
@@ -171,7 +171,7 @@ class Service extends Component
         ]);
     }
 
-    public function onSaveElement(Element $element): void
+    public function onSaveElement(ElementInterface $element): void
     {
         $shortcut = $this->getByElementId($element->id, $element->siteId);
 
@@ -183,7 +183,7 @@ class Service extends Component
         }
     }
 
-    public function onDeleteElement(Element $element): void
+    public function onDeleteElement(ElementInterface $element): void
     {
         $shortcut = $this->getByElementId($element->id, $element->siteId);
 

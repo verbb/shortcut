@@ -5,7 +5,6 @@ use verbb\shortcut\Shortcut;
 
 use craft\web\Controller;
 
-use yii\base\Exception;
 use yii\web\Response;
 
 class BaseController extends Controller
@@ -13,7 +12,7 @@ class BaseController extends Controller
     // Properties
     // =========================================================================
 
-    protected $allowAnonymous = ['get'];
+    protected array|bool|int $allowAnonymous = ['get'];
 
 
     // Public Methods

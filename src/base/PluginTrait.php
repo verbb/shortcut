@@ -1,6 +1,7 @@
 <?php
 namespace verbb\shortcut\base;
 
+use verbb\shortcut\Shortcut;
 use verbb\shortcut\services\Service;
 
 use Craft;
@@ -14,7 +15,7 @@ trait PluginTrait
     // Static Properties
     // =========================================================================
 
-    public static $plugin;
+    public static Shortcut $plugin;
 
 
     // Public Methods

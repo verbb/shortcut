@@ -21,7 +21,7 @@ You can also add the package to your project using Composer.
 3. In the Control Panel, go to Settings → Plugins and click the “Install” button for Shortcut.
 
 ## Usage
-To create a short url for a element:
+To create a short url for an element:
 
 ```twig
 {% set shortcut = craft.shortcut.get({ element: entry }) %}

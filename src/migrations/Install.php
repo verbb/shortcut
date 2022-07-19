@@ -1,8 +1,6 @@
 <?php
 namespace verbb\shortcut\migrations;
 
-use Craft;
-use craft\config\DbConfig;
 use craft\db\Migration;
 
 class Install extends Migration

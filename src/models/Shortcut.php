@@ -15,45 +15,14 @@ class Shortcut extends Model
     // Properties
     // =========================================================================
 
-    /**
-     * @var integer|null
-     */
-    public $id = null;
-
-    /**
-     * @var string
-     */
-    public $url = '';
-
-    /**
-     * @var string
-     */
-    public $urlHash = '';
-
-    /**
-     * @var string
-     */
-    public $code = '';
-
-    /**
-     * @var integer
-     */
-    public $elementId;
-
-    /**
-     * @var string
-     */
-    public $elementType;
-
-    /**
-     * @var integer
-     */
-    public $siteId;
-
-    /**
-     * @var integer
-     */
-    public $hits = 0;
+    public ?int $id = null;
+    public string $url = '';
+    public string $urlHash = '';
+    public string $code = '';
+    public ?int $elementId= null;
+    public ?string $elementType= null;
+    public ?int $siteId= null;
+    public int $hits = 0;
 
 
     // Public Methods
@@ -72,7 +41,7 @@ class Shortcut extends Model
     public function getUrl(): string
     {
         $settings = ShortcutPlugin::$plugin->getSettings();
-        $urlSegment = $settings->hideUrlSegment ? '' : ($settings->urlSegment ?: 's');
+        $urlSegment = $settings->hideUrlSegment ? '' : $settings->urlSegment;
         $customDomain = $settings->customDomain;
 
         if (!empty($customDomain)) {

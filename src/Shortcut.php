@@ -18,14 +18,14 @@ use craft\web\twig\variables\CraftVariable;
 use yii\base\Event;
 use yii\web\HttpException;
 
-use Twig_Error_Runtime;
+use Twig\Error\RuntimeError;
 
 class Shortcut extends Plugin
 {
     // Properties
     // =========================================================================
 
-    public $schemaVersion = '2.0.0';
+    public string $schemaVersion = '2.0.0';
 
 
     // Traits
@@ -69,24 +69,23 @@ class Shortcut extends Plugin
     // Private Methods
     // =========================================================================
 
-    private function _registerVariables()
+    private function _registerVariables(): void
     {
         Event::on(CraftVariable::class, CraftVariable::EVENT_INIT, function(Event $event) {
             $event->sender->set('shortcut', ShortcutVariable::class);
         });
     }
 
-    private function _registerSiteRoutes()
+    private function _registerSiteRoutes(): void
     {
-        $urlSegment = $this->getSettings()->urlSegment ?: 's';
-        $urlSegment = $urlSegment . '/<code:\w+>';
+        $urlSegment = $this->getSettings()->urlSegment . '/<code:\w+>';
 
         Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_SITE_URL_RULES, function(RegisterUrlRulesEvent $event) use ($urlSegment) {
             $event->rules[$urlSegment] = 'shortcut/base/get';
         });
     }
 
-    private function _registerCraftEventListeners()
+    private function _registerCraftEventListeners(): void
     {
         Event::on(Elements::class, Elements::EVENT_AFTER_SAVE_ELEMENT, function(ElementEvent $event) {
             if (!$event->isNew) {
@@ -105,7 +104,7 @@ class Shortcut extends Plugin
             $exception = $event->exception;
 
             // If this is a Twig Runtime exception, use the previous one instead
-            if ($exception instanceof Twig_Error_Runtime && ($previousException = $exception->getPrevious()) !== null) {
+            if ($exception instanceof RuntimeError && ($previousException = $exception->getPrevious()) !== null) {
                 $exception = $previousException;
             }
 

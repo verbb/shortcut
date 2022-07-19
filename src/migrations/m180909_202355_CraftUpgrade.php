@@ -19,8 +19,8 @@ class m180909_202355_CraftUpgrade extends Install
     // Properties
     // =========================================================================
 
-    public $sites = [];
-    public $siteMap = [];
+    public array $sites = [];
+    public array $siteMap = [];
 
 
     // Public Methods
@@ -34,9 +34,8 @@ class m180909_202355_CraftUpgrade extends Install
 
         // Convert
         if ($oldTable) {
-            $newTable = ShortcutRecord::TABLE_NAME;
+            $newTable = '{{%shortcut_shortcuts}}';
             $this->sites = Craft::$app->getSites()->getAllSites();
-            $siteMap = [];
             $transaction = Craft::$app->getDb()->beginTransaction();
 
             foreach ($this->sites as $site) {
