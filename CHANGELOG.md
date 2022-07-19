@@ -1,5 +1,11 @@
 # Changelog
 
+## 4.0.0 - 2022-07-19
+
+### Changed
+- Now requires PHP `8.0.2+`.
+- Now requires Craft `4.0.0+`.
+
 ## 3.0.1 - 2022-07-19
 
 ### Added
@@ -31,7 +37,7 @@
 ## 2.0.1 - 2018-06-01
 
 ### Fixed
-- Fixed create method for url's
+- Fixed create method for urls
 
 ## 2.0.0 - 2017-11-14
 
