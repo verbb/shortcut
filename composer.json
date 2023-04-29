@@ -1,6 +1,6 @@
 {
     "name": "verbb/shortcut",
-    "description": "Simple URL shortening",
+    "description": "Simple URL shortening.",
     "type": "craft-plugin",
     "version": "4.0.0",
     "keywords": [
