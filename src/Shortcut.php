@@ -43,11 +43,9 @@ class Shortcut extends Plugin
 
         self::$plugin = $this;
 
-        $this->_setPluginComponents();
-        $this->_setLogging();
         $this->_registerSiteRoutes();
         $this->_registerVariables();
-        $this->_registerCraftEventListeners();
+        $this->_registerEventHandlers();
 
         $request = Craft::$app->getRequest();
 
@@ -85,7 +83,7 @@ class Shortcut extends Plugin
         });
     }
 
-    private function _registerCraftEventListeners(): void
+    private function _registerEventHandlers(): void
     {
         Event::on(Elements::class, Elements::EVENT_AFTER_SAVE_ELEMENT, function(ElementEvent $event) {
             if (!$event->isNew) {

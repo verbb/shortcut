@@ -28,16 +28,6 @@ class Shortcut extends Model
     // Public Methods
     // =========================================================================
 
-    public function defineRules(): array
-    {
-        $rules = parent::defineRules();
-
-        $rules[] = [['code', 'url', 'urlHash'], 'string'];
-        $rules[] = [['elementId'], 'integer'];
-
-        return $rules;
-    }
-
     public function getUrl(): string
     {
         $settings = ShortcutPlugin::$plugin->getSettings();
@@ -69,5 +59,19 @@ class Shortcut extends Model
     public function redirect(): Response
     {
         return Craft::$app->getResponse()->redirect($this->url);
+    }
+
+
+    // Protected Methods
+    // =========================================================================
+
+    protected function defineRules(): array
+    {
+        $rules = parent::defineRules();
+
+        $rules[] = [['code', 'url', 'urlHash'], 'string'];
+        $rules[] = [['elementId'], 'integer'];
+
+        return $rules;
     }
 }
