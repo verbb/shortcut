@@ -1,5 +1,5 @@
-# Shortcut plugin for Craft CMS
-<img width="500" src="https://verbb.imgix.net/plugins/shortcut/shortcut-social-card.png?v=2">
+<p align="center"><img src="https://verbb.imgix.net/plugins/shortcut/shortcut-icon.svg" width="100" height="100" alt="Shortcut icon"></p>
+<h1 align="center">Shortcut for Craft CMS</h1>
 
 Shortcut is a Craft CMS plugin that lets you create short links for elements or arbitrary URLs.
 
