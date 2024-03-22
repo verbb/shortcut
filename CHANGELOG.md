@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.0.1 - 2024-03-22
+
+### Changed
+- Increase the size of link storage past 400 characters.
+
 ## 4.0.0 - 2022-07-19
 
 ### Changed
