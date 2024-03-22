@@ -25,7 +25,7 @@ class Shortcut extends Plugin
     // Properties
     // =========================================================================
 
-    public string $schemaVersion = '2.0.0';
+    public string $schemaVersion = '2.1.0';
 
 
     // Traits

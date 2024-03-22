@@ -5,6 +5,7 @@ use verbb\shortcut\Shortcut;
 use verbb\shortcut\records\Shortcut as ShortcutRecord;
 
 use Craft;
+use craft\db\Migration;
 use craft\db\Query;
 use craft\elements\Asset;
 use craft\elements\Entry;
@@ -14,7 +15,7 @@ use craft\models\Site;
 use function is_callable;
 use Throwable;
 
-class m180909_202355_CraftUpgrade extends Install
+class m180909_202355_CraftUpgrade extends Migration
 {
     // Properties
     // =========================================================================
