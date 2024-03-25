@@ -1,5 +1,10 @@
 # Changelog
 
+## 4.0.2 - 2024-03-26
+
+### Fixed
+- Fix migration for `elementType`.
+
 ## 4.0.1 - 2024-03-22
 
 ### Changed
