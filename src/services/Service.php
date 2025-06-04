@@ -146,6 +146,11 @@ class Service extends Component
                 $record = new ShortcutRecord();
             }
 
+            // Ensure a code is set, if not already
+            if (empty($shortcut->code)) {
+                $shortcut->code = $this->getUniqueKey();
+            }
+
             $record->url = $shortcut->url;
             $record->urlHash = $shortcut->urlHash;
             $record->code = $shortcut->code;
@@ -154,13 +159,7 @@ class Service extends Component
             $record->elementId = $shortcut->elementId;
             $record->elementType = $shortcut->elementType;
 
-            if ($record->save() && empty($record->code)) {
-                $record->code = $this->getUniqueKey();
-
-                if ($record->save()) {
-                    $shortcut->code = $record->code;
-                }
-            }
+            $record->save();
         }
     }
 
