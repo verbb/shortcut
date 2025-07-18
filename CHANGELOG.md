@@ -1,5 +1,13 @@
 # Changelog
 
+## 5.0.1 - 2025-07-18
+
+### Changed
+- Update English translations.
+
+### Fixed
+- Fix an error when creating a shortcut item when no code is provided.
+
 ## 5.0.0 - 2024-05-12
 
 ### Changed
