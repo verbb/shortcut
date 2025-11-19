@@ -10,6 +10,7 @@ use craft\base\Plugin;
 use craft\events\ElementEvent;
 use craft\events\ExceptionEvent;
 use craft\events\RegisterUrlRulesEvent;
+use craft\helpers\UrlHelper;
 use craft\services\Elements;
 use craft\web\ErrorHandler;
 use craft\web\UrlManager;
@@ -25,6 +26,7 @@ class Shortcut extends Plugin
     // Properties
     // =========================================================================
 
+    public bool $hasCpSettings = true;
     public string $schemaVersion = '2.1.1';
 
 
@@ -52,8 +54,17 @@ class Shortcut extends Plugin
         if ($request->getIsSiteRequest() && !$request->getIsConsoleRequest()) {
             $this->_handleSiteRequest();
         }
+
+        if ($request->getIsCpRequest()) {
+            $this->_registerCpRoutes();
+        }
     }
 
+    public function getSettingsResponse(): mixed
+    {
+        return Craft::$app->getResponse()->redirect(UrlHelper::cpUrl('shortcut/settings'));
+    }
+    
 
     // Protected Methods
     // =========================================================================
@@ -66,6 +77,14 @@ class Shortcut extends Plugin
 
     // Private Methods
     // =========================================================================
+
+    private function _registerCpRoutes(): void
+    {
+        Event::on(UrlManager::class, UrlManager::EVENT_REGISTER_CP_URL_RULES, function(RegisterUrlRulesEvent $event): void {
+            $event->rules['shortcut'] = 'shortcut/settings/index';
+            $event->rules['shortcut/settings'] = 'shortcut/settings/index';
+        });
+    }
 
     private function _registerVariables(): void
     {

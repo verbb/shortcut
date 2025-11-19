@@ -1,0 +1,61 @@
+{% extends 'shortcut/_layouts/settings' %}
+
+{% import '_includes/forms' as forms %}
+{% import 'verbb-base/_macros' as macros %}
+
+{% set crumbs = [
+    { label: 'Shortcut' | t('shortcut'), url: url('shortcut/settings') },
+    { label: 'Settings' | t('app'), url: url('shortcut/settings') }
+] %}
+
+{% set selectedTab = 'settings' %}
+{% set fullPageForm = true %}
+
+{% block content %}
+
+<h2>{{ 'General Settings' | t('shortcut') }}</h2>
+
+<input type="hidden" name="action" value="plugins/save-plugin-settings">
+<input type="hidden" name="pluginHandle" value="shortcut">
+
+{% namespace 'settings' %}
+
+{{ forms.textField({
+    label: 'URL Segment' | t('shortcut'),
+    instructions: 'Set the URL segment for links. e.g. `my-site.test/s/xxxxx`.' | t('shortcut'),
+    name: 'urlSegment',
+    value: settings.urlSegment,
+    errors: settings.getErrors('urlSegment'),
+    warning: macros.configWarning('urlSegment', 'shortcut'),
+}) }}
+
+{{ forms.lightswitchField({
+    label: 'Hide URL Segment' | t('shortcut'),
+    instructions: 'Whether to hide the URL segment for links. e.g. `my-site.test/xxxxx`.' | t('shortcut'),
+    name: 'hideUrlSegment',
+    on: settings.hideUrlSegment,
+    errors: settings.getErrors('hideUrlSegment'),
+    warning: macros.configWarning('hideUrlSegment', 'shortcut'),
+}) }}
+
+{{ forms.textField({
+    label: 'Custom Domain' | t('shortcut'),
+    instructions: 'Whether to use a custom domain name for links.' | t('shortcut'),
+    name: 'customDomain',
+    value: settings.customDomain,
+    errors: settings.getErrors('customDomain'),
+    warning: macros.configWarning('customDomain', 'shortcut'),
+}) }}
+
+{{ forms.textField({
+    label: 'Hash Length' | t('shortcut'),
+    instructions: ' Control the length of the unique hash.' | t('shortcut'),
+    name: 'hashLength',
+    value: settings.hashLength,
+    errors: settings.getErrors('hashLength'),
+    warning: macros.configWarning('hashLength', 'shortcut'),
+}) }}
+    
+{% endnamespace %}
+
+{% endblock %}

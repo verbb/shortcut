@@ -1,0 +1,11 @@
+{% extends 'shortcut/_layouts' %}
+
+{% import '_includes/forms' as forms %}
+{% import 'verbb-base/_macros' as macros %}
+
+{% requireAdmin %}
+
+{% set crumbs = [
+    { label: 'Shortcut' | t('shortcut'), url: url('shortcut') },
+    { label: 'Settings' | t('app'), url: url('shortcut/settings') },
+] %}
