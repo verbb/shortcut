@@ -20,6 +20,7 @@ class SettingsController extends Controller
 
         return $this->renderTemplate('shortcut/settings', [
             'settings' => $settings,
+            'providerOptions' => Settings::getProviderOptions(),
         ]);
     }
 }

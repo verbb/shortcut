@@ -19,6 +19,8 @@ class Shortcut extends Model
     public string $url = '';
     public string $urlHash = '';
     public string $code = '';
+    public string $provider = Settings::PROVIDER_LOCAL;
+    public string $externalUrl = '';
     public ?int $elementId= null;
     public ?string $elementType= null;
     public ?int $siteId= null;
@@ -30,6 +32,10 @@ class Shortcut extends Model
 
     public function getUrl(): string
     {
+        if ($this->externalUrl) {
+            return $this->externalUrl;
+        }
+
         $settings = ShortcutPlugin::$plugin->getSettings();
         $urlSegment = $settings->hideUrlSegment ? '' : $settings->urlSegment;
         $customDomain = $settings->customDomain;
@@ -69,7 +75,7 @@ class Shortcut extends Model
     {
         $rules = parent::defineRules();
 
-        $rules[] = [['code', 'url', 'urlHash'], 'string'];
+        $rules[] = [['code', 'url', 'urlHash', 'provider', 'externalUrl'], 'string'];
         $rules[] = [['elementId'], 'integer'];
 
         return $rules;

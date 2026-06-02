@@ -2,12 +2,18 @@
 namespace verbb\shortcut\services;
 
 use verbb\shortcut\Shortcut as ShortcutPlugin;
+use verbb\shortcut\models\Settings;
 use verbb\shortcut\models\Shortcut;
 use verbb\shortcut\records\Shortcut as ShortcutRecord;
+use verbb\shortcut\shorteners\BitlyShortener;
+use verbb\shortcut\shorteners\IsGdShortener;
+use verbb\shortcut\shorteners\RebrandlyShortener;
+use verbb\shortcut\shorteners\ShortenerInterface;
+use verbb\shortcut\shorteners\ShortIoShortener;
+use verbb\shortcut\shorteners\TinyUrlShortener;
 
 use Craft;
 use craft\base\Component;
-use craft\base\Element;
 use craft\base\ElementInterface;
 use craft\db\Query;
 use craft\helpers\Db;
@@ -28,7 +34,7 @@ class Service extends Component
             $element = $options['element'];
 
             // Check if we have one
-            $shortcut = $this->getByElementId($element->id, $element->siteId);
+            $shortcut = $this->getByElementId($element->id, $element->siteId, $this->_currentProvider());
 
             // If not, create one
             if (!$shortcut) {
@@ -40,7 +46,7 @@ class Service extends Component
             $url = $options['url'];
 
             // Check if we have one
-            $shortcut = $this->getByUrl($url);
+            $shortcut = $this->getByUrl($url, $this->_currentProvider());
 
             // If not, create one
             if (!$shortcut) {
@@ -54,6 +60,7 @@ class Service extends Component
     public function create(array $options = []): Shortcut
     {
         $model = new Shortcut();
+        $model->provider = $this->_currentProvider();
 
         if (isset($options['element'])) {
             $element = $options['element'];
@@ -63,14 +70,14 @@ class Service extends Component
             $model->elementType = get_class($element);
             $model->siteId = $element->siteId;
             $model->url = $url;
-            $model->urlHash = $this->_hashForUrl($url, $model->elementId, $model->siteId);
+            $model->urlHash = $this->_hashForUrl($url, $model->elementId, $model->siteId, $model->provider);
         }
 
         if (isset($options['url'])) {
             $url = $options['url'];
             $model->url = $url;
             $model->siteId = Craft::$app->getSites()->currentSite->id;
-            $model->urlHash = $this->_hashForUrl($url);
+            $model->urlHash = $this->_hashForUrl($url, null, null, $model->provider);
         }
 
         $this->saveShortcut($model);
@@ -100,9 +107,10 @@ class Service extends Component
         return null;
     }
 
-    public function getByUrl($url = null): ?Shortcut
+    public function getByUrl($url = null, ?string $provider = null): ?Shortcut
     {
-        $hash = $this->_hashForUrl($url);
+        $provider ??= $this->_currentProvider();
+        $hash = $this->_hashForUrl($url, null, null, $provider);
 
         $record = ShortcutRecord::findOne(['urlHash' => $hash]);
 
@@ -113,9 +121,11 @@ class Service extends Component
         return null;
     }
 
-    public function getByElementId($id = null, $siteId = null): ?Shortcut
+    public function getByElementId($id = null, $siteId = null, ?string $provider = null): ?Shortcut
     {
-        $record = ShortcutRecord::findOne(['elementId' => $id, 'siteId' => $siteId]);
+        $provider ??= $this->_currentProvider();
+
+        $record = ShortcutRecord::findOne(['elementId' => $id, 'siteId' => $siteId, 'provider' => $provider]);
 
         if ($record) {
             return $this->_populateShortcut($record);
@@ -151,9 +161,13 @@ class Service extends Component
                 $shortcut->code = $this->getUniqueKey();
             }
 
+            $this->_prepareExternalUrl($shortcut);
+
             $record->url = $shortcut->url;
             $record->urlHash = $shortcut->urlHash;
             $record->code = $shortcut->code;
+            $record->provider = $shortcut->provider;
+            $record->externalUrl = $shortcut->externalUrl;
             $record->siteId = $shortcut->siteId;
             $record->hits = $shortcut->hits;
             $record->elementId = $shortcut->elementId;
@@ -172,11 +186,14 @@ class Service extends Component
 
     public function onSaveElement(ElementInterface $element): void
     {
-        $shortcut = $this->getByElementId($element->id, $element->siteId);
+        $provider = $this->_currentProvider();
+        $shortcut = $this->getByElementId($element->id, $element->siteId, $provider);
 
         // Check if we should update the url
         if ($shortcut && $element->getUrl() !== $shortcut->url) {
             $shortcut->url = $element->getUrl();
+            $shortcut->urlHash = $this->_hashForUrl($shortcut->url, $shortcut->elementId, $shortcut->siteId, $provider);
+            $shortcut->externalUrl = '';
 
             $this->saveShortcut($shortcut);
         }
@@ -237,10 +254,16 @@ class Service extends Component
     // Private Methods
     // =========================================================================
 
-    private function _hashForUrl($url = null, $elementId = null, $siteId = null): string
+    private function _hashForUrl($url = null, $elementId = null, $siteId = null, ?string $provider = null): string
     {
         // Use all parts of info to generate a unique key
-        $parts = implode('-', array_filter([$url, $elementId, $siteId]));
+        $parts = [$url, $elementId, $siteId];
+
+        if ($provider && $provider !== Settings::PROVIDER_LOCAL) {
+            $parts[] = $provider;
+        }
+
+        $parts = implode('-', array_filter($parts));
 
         return md5($parts);
     }
@@ -256,7 +279,37 @@ class Service extends Component
         $model->url = $record->url;
         $model->urlHash = $record->urlHash;
         $model->code = $record->code;
+        $model->provider = $record->provider;
+        $model->externalUrl = $record->externalUrl;
 
         return $model;
+    }
+
+    private function _currentProvider(): string
+    {
+        return ShortcutPlugin::$plugin->getSettings()->provider ?: Settings::PROVIDER_LOCAL;
+    }
+
+    private function _prepareExternalUrl(Shortcut $shortcut): void
+    {
+        if ($shortcut->provider === Settings::PROVIDER_LOCAL || $shortcut->externalUrl) {
+            return;
+        }
+
+        $shortcut->externalUrl = $this->_createShortener($shortcut->provider)->shorten($shortcut->getRealUrl());
+    }
+
+    private function _createShortener(string $provider): ShortenerInterface
+    {
+        $settings = ShortcutPlugin::$plugin->getSettings();
+
+        return match ($provider) {
+            Settings::PROVIDER_BITLY => new BitlyShortener($settings),
+            Settings::PROVIDER_TINYURL => new TinyUrlShortener(),
+            Settings::PROVIDER_ISGD => new IsGdShortener(),
+            Settings::PROVIDER_REBRANDLY => new RebrandlyShortener($settings),
+            Settings::PROVIDER_SHORTIO => new ShortIoShortener($settings),
+            default => throw new Exception(Craft::t('shortcut', 'Unknown shortcut provider "{provider}".', ['provider' => $provider])),
+        };
     }
 }
