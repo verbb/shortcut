@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.0.3 - 2026-06-05
+
+### Added
+- Add support for Bitly, TinyURL, is.gd, Rebrandly and Short.io.
+
 ## 5.0.2 - 2025-11-29
 
 ### Added
