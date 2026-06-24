@@ -276,11 +276,11 @@ class Service extends Component
         $model->elementId = $record->elementId;
         $model->elementType = $record->elementType;
         $model->hits = $record->hits;
-        $model->url = $record->url;
-        $model->urlHash = $record->urlHash;
+        $model->url = $record->url ?? '';
+        $model->urlHash = $record->urlHash ?? '';
         $model->code = $record->code;
         $model->provider = $record->provider;
-        $model->externalUrl = $record->externalUrl;
+        $model->externalUrl = $record->externalUrl ?? '';
 
         return $model;
     }
