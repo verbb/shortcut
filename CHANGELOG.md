@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.0.4 - 2026-06-27
+
+### Fixed
+- Fix TypeError when populating shortcuts with null string columns from the database.
+
 ## 5.0.3 - 2026-06-05
 
 ### Added
