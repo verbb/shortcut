@@ -3,141 +3,128 @@
 {% import '_includes/forms' as forms %}
 {% import 'verbb-base/_macros' as macros %}
 
-{% set crumbs = [
-    { label: 'Shortcut' | t('shortcut'), url: url('shortcut/settings') },
-    { label: 'Settings' | t('app'), url: url('shortcut/settings') }
-] %}
-
-{% set selectedTab = 'settings' %}
 {% set fullPageForm = true %}
+{% set selectedTab = 'general' %}
+{% set pageTitle = 'General Settings' | t('shortcut') %}
+{% set pageAction = 'plugins/save-plugin-settings' %}
+{% set pageUrl = 'shortcut/settings' %}
 
-{% block content %}
+{% block settingsContent %}
+    {{ forms.textField({
+        label: 'URL Segment' | t('shortcut'),
+        instructions: 'Set the URL segment for links. e.g. `my-site.test/s/xxxxx`.' | t('shortcut'),
+        name: 'urlSegment',
+        value: settings.urlSegment,
+        errors: settings.getErrors('urlSegment'),
+        warning: macros.configWarning('urlSegment', 'shortcut'),
+    }) }}
 
-<h2>{{ 'General Settings' | t('shortcut') }}</h2>
+    {{ forms.lightswitchField({
+        label: 'Hide URL Segment' | t('shortcut'),
+        instructions: 'Whether to hide the URL segment for links. e.g. `my-site.test/xxxxx`.' | t('shortcut'),
+        name: 'hideUrlSegment',
+        on: settings.hideUrlSegment,
+        errors: settings.getErrors('hideUrlSegment'),
+        warning: macros.configWarning('hideUrlSegment', 'shortcut'),
+    }) }}
 
-<input type="hidden" name="action" value="plugins/save-plugin-settings">
-<input type="hidden" name="pluginHandle" value="shortcut">
+    {{ forms.textField({
+        label: 'Custom Domain' | t('shortcut'),
+        instructions: 'Whether to use a custom domain name for links.' | t('shortcut'),
+        name: 'customDomain',
+        value: settings.customDomain,
+        errors: settings.getErrors('customDomain'),
+        warning: macros.configWarning('customDomain', 'shortcut'),
+    }) }}
 
-{% namespace 'settings' %}
+    {{ forms.textField({
+        label: 'Hash Length' | t('shortcut'),
+        instructions: ' Control the length of the unique hash.' | t('shortcut'),
+        name: 'hashLength',
+        value: settings.hashLength,
+        errors: settings.getErrors('hashLength'),
+        warning: macros.configWarning('hashLength', 'shortcut'),
+    }) }}
 
-{{ forms.textField({
-    label: 'URL Segment' | t('shortcut'),
-    instructions: 'Set the URL segment for links. e.g. `my-site.test/s/xxxxx`.' | t('shortcut'),
-    name: 'urlSegment',
-    value: settings.urlSegment,
-    errors: settings.getErrors('urlSegment'),
-    warning: macros.configWarning('urlSegment', 'shortcut'),
-}) }}
+    <hr>
 
-{{ forms.lightswitchField({
-    label: 'Hide URL Segment' | t('shortcut'),
-    instructions: 'Whether to hide the URL segment for links. e.g. `my-site.test/xxxxx`.' | t('shortcut'),
-    name: 'hideUrlSegment',
-    on: settings.hideUrlSegment,
-    errors: settings.getErrors('hideUrlSegment'),
-    warning: macros.configWarning('hideUrlSegment', 'shortcut'),
-}) }}
+    <h2>{{ 'External Services' | t('shortcut') }}</h2>
 
-{{ forms.textField({
-    label: 'Custom Domain' | t('shortcut'),
-    instructions: 'Whether to use a custom domain name for links.' | t('shortcut'),
-    name: 'customDomain',
-    value: settings.customDomain,
-    errors: settings.getErrors('customDomain'),
-    warning: macros.configWarning('customDomain', 'shortcut'),
-}) }}
+    {{ forms.selectField({
+        label: 'Provider' | t('shortcut'),
+        instructions: 'Choose where Shortcut should create shortened URLs. Existing shortcuts keep using the provider they were created with.' | t('shortcut'),
+        name: 'provider',
+        value: settings.provider,
+        options: providerOptions,
+        toggle: true,
+        targetPrefix: '.provider-',
+        errors: settings.getErrors('provider'),
+        warning: macros.configWarning('provider', 'shortcut'),
+    }) }}
 
-{{ forms.textField({
-    label: 'Hash Length' | t('shortcut'),
-    instructions: ' Control the length of the unique hash.' | t('shortcut'),
-    name: 'hashLength',
-    value: settings.hashLength,
-    errors: settings.getErrors('hashLength'),
-    warning: macros.configWarning('hashLength', 'shortcut'),
-}) }}
+    <div class="provider-bitly {{ settings.provider != 'bitly' ? 'hidden' }}">
+        {{ forms.autosuggestField({
+            label: 'Bitly Access Token' | t('shortcut'),
+            instructions: 'Required when the provider is set to Bitly. Environment variables are supported.' | t('shortcut'),
+            name: 'bitlyAccessToken',
+            value: settings.bitlyAccessToken,
+            suggestEnvVars: true,
+            errors: settings.getErrors('bitlyAccessToken'),
+            warning: macros.configWarning('bitlyAccessToken', 'shortcut'),
+        }) }}
+    </div>
 
-<hr>
+    <div class="provider-rebrandly {{ settings.provider != 'rebrandly' ? 'hidden' }}">
+        {{ forms.autosuggestField({
+            label: 'Rebrandly API Key' | t('shortcut'),
+            instructions: 'Required when the provider is set to Rebrandly. Environment variables are supported.' | t('shortcut'),
+            name: 'rebrandlyApiKey',
+            value: settings.rebrandlyApiKey,
+            suggestEnvVars: true,
+            errors: settings.getErrors('rebrandlyApiKey'),
+            warning: macros.configWarning('rebrandlyApiKey', 'shortcut'),
+        }) }}
 
-<h2>{{ 'External Services' | t('shortcut') }}</h2>
+        {{ forms.autosuggestField({
+            label: 'Rebrandly Domain' | t('shortcut'),
+            instructions: 'Optional branded domain for Rebrandly links, such as `rebrand.ly`. Environment variables are supported.' | t('shortcut'),
+            name: 'rebrandlyDomain',
+            value: settings.rebrandlyDomain,
+            suggestEnvVars: true,
+            errors: settings.getErrors('rebrandlyDomain'),
+            warning: macros.configWarning('rebrandlyDomain', 'shortcut'),
+        }) }}
 
-{{ forms.selectField({
-    label: 'Provider' | t('shortcut'),
-    instructions: 'Choose where Shortcut should create shortened URLs. Existing shortcuts keep using the provider they were created with.' | t('shortcut'),
-    name: 'provider',
-    value: settings.provider,
-    options: providerOptions,
-    toggle: true,
-    targetPrefix: '.provider-',
-    errors: settings.getErrors('provider'),
-    warning: macros.configWarning('provider', 'shortcut'),
-}) }}
+        {{ forms.autosuggestField({
+            label: 'Rebrandly Workspace ID' | t('shortcut'),
+            instructions: 'Optional workspace ID for Rebrandly accounts with multiple workspaces. Environment variables are supported.' | t('shortcut'),
+            name: 'rebrandlyWorkspaceId',
+            value: settings.rebrandlyWorkspaceId,
+            suggestEnvVars: true,
+            errors: settings.getErrors('rebrandlyWorkspaceId'),
+            warning: macros.configWarning('rebrandlyWorkspaceId', 'shortcut'),
+        }) }}
+    </div>
 
-<div class="provider-bitly {{ settings.provider != 'bitly' ? 'hidden' }}">
-{{ forms.autosuggestField({
-    label: 'Bitly Access Token' | t('shortcut'),
-    instructions: 'Required when the provider is set to Bitly. Environment variables are supported.' | t('shortcut'),
-    name: 'bitlyAccessToken',
-    value: settings.bitlyAccessToken,
-    suggestEnvVars: true,
-    errors: settings.getErrors('bitlyAccessToken'),
-    warning: macros.configWarning('bitlyAccessToken', 'shortcut'),
-}) }}
-</div>
+    <div class="provider-shortio {{ settings.provider != 'shortio' ? 'hidden' }}">
+        {{ forms.autosuggestField({
+            label: 'Short.io API Key' | t('shortcut'),
+            instructions: 'Required when the provider is set to Short.io. Environment variables are supported.' | t('shortcut'),
+            name: 'shortioApiKey',
+            value: settings.shortioApiKey,
+            suggestEnvVars: true,
+            errors: settings.getErrors('shortioApiKey'),
+            warning: macros.configWarning('shortioApiKey', 'shortcut'),
+        }) }}
 
-<div class="provider-rebrandly {{ settings.provider != 'rebrandly' ? 'hidden' }}">
-{{ forms.autosuggestField({
-    label: 'Rebrandly API Key' | t('shortcut'),
-    instructions: 'Required when the provider is set to Rebrandly. Environment variables are supported.' | t('shortcut'),
-    name: 'rebrandlyApiKey',
-    value: settings.rebrandlyApiKey,
-    suggestEnvVars: true,
-    errors: settings.getErrors('rebrandlyApiKey'),
-    warning: macros.configWarning('rebrandlyApiKey', 'shortcut'),
-}) }}
-
-{{ forms.autosuggestField({
-    label: 'Rebrandly Domain' | t('shortcut'),
-    instructions: 'Optional branded domain for Rebrandly links, such as `rebrand.ly`. Environment variables are supported.' | t('shortcut'),
-    name: 'rebrandlyDomain',
-    value: settings.rebrandlyDomain,
-    suggestEnvVars: true,
-    errors: settings.getErrors('rebrandlyDomain'),
-    warning: macros.configWarning('rebrandlyDomain', 'shortcut'),
-}) }}
-
-{{ forms.autosuggestField({
-    label: 'Rebrandly Workspace ID' | t('shortcut'),
-    instructions: 'Optional workspace ID for Rebrandly accounts with multiple workspaces. Environment variables are supported.' | t('shortcut'),
-    name: 'rebrandlyWorkspaceId',
-    value: settings.rebrandlyWorkspaceId,
-    suggestEnvVars: true,
-    errors: settings.getErrors('rebrandlyWorkspaceId'),
-    warning: macros.configWarning('rebrandlyWorkspaceId', 'shortcut'),
-}) }}
-</div>
-
-<div class="provider-shortio {{ settings.provider != 'shortio' ? 'hidden' }}">
-{{ forms.autosuggestField({
-    label: 'Short.io API Key' | t('shortcut'),
-    instructions: 'Required when the provider is set to Short.io. Environment variables are supported.' | t('shortcut'),
-    name: 'shortioApiKey',
-    value: settings.shortioApiKey,
-    suggestEnvVars: true,
-    errors: settings.getErrors('shortioApiKey'),
-    warning: macros.configWarning('shortioApiKey', 'shortcut'),
-}) }}
-
-{{ forms.autosuggestField({
-    label: 'Short.io Domain' | t('shortcut'),
-    instructions: 'Required when the provider is set to Short.io, such as `example.xyz`. Environment variables are supported.' | t('shortcut'),
-    name: 'shortioDomain',
-    value: settings.shortioDomain,
-    suggestEnvVars: true,
-    errors: settings.getErrors('shortioDomain'),
-    warning: macros.configWarning('shortioDomain', 'shortcut'),
-}) }}
-</div>
-    
-{% endnamespace %}
-
+        {{ forms.autosuggestField({
+            label: 'Short.io Domain' | t('shortcut'),
+            instructions: 'Required when the provider is set to Short.io, such as `example.xyz`. Environment variables are supported.' | t('shortcut'),
+            name: 'shortioDomain',
+            value: settings.shortioDomain,
+            suggestEnvVars: true,
+            errors: settings.getErrors('shortioDomain'),
+            warning: macros.configWarning('shortioDomain', 'shortcut'),
+        }) }}
+    </div>
 {% endblock %}
