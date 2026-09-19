@@ -3,6 +3,8 @@
 
 Shortcut is a Craft CMS plugin that lets you create short links for elements or arbitrary URLs.
 
+Generate links locally or use Bitly, TinyURL, is.gd, Rebrandly or Short.io.
+
 ## Documentation
 Visit the [Shortcut Plugin page](https://verbb.io/craft-plugins/shortcut) for all documentation, guides, pricing and developer resources.
 
