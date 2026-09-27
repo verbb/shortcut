@@ -4,11 +4,11 @@ namespace verbb\shortcut\controllers;
 use verbb\shortcut\Shortcut;
 use verbb\shortcut\models\Settings;
 
-use craft\web\Controller;
-
 use yii\web\Response;
 
-class SettingsController extends Controller
+use verbb\base\controllers\SettingsController as BaseSettingsController;
+
+class SettingsController extends BaseSettingsController
 {
     // Public Methods
     // =========================================================================
