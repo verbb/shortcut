@@ -4,12 +4,11 @@ Pass a URL to Shortcut from Twig or PHP and receive a compact version suitable f
 
 ## Features
 
-- **Short URLs:** Turn long destinations into compact links from Twig or PHP.
-- **Stored results:** Reuse generated shortcuts instead of requesting the same link repeatedly.
-- **Provider choice:** Select a shortening service that fits the project.
-- **Hosted providers:** Use Bitly, TinyURL, is.gd, Rebrandly, or Short.io when links should be created externally.
-- **Local links:** Keep shortened URLs within Craft when an external provider is unnecessary.
-- **Template API:** Generate and retrieve shortcuts close to where they are presented.
-- **Extensible providers:** Add another service behind a consistent shortener interface.
-- **Central configuration:** Keep service selection and credentials out of presentation templates.
-- **Flexible providers:** Use a supported public shortener or implement another provider behind the same plugin interface. Project code can ask for a short URL without taking on each service’s request and response details.
+- Turn long destinations into compact links from Twig or PHP.
+- Reuse generated shortcuts instead of requesting the same link repeatedly.
+- Select a shortening service that fits the project.
+- Use Bitly, TinyURL, is.gd, Rebrandly, or Short.io when links should be created externally.
+- Keep shortened URLs within Craft when an external provider is unnecessary.
+- Generate and retrieve shortcuts close to where they are presented.
+- Add another service behind a consistent shortener interface.
+- Keep service selection and credentials out of presentation templates.
