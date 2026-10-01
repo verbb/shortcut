@@ -21,9 +21,9 @@ class Shortcut extends Model
     public string $code = '';
     public string $provider = Settings::PROVIDER_LOCAL;
     public string $externalUrl = '';
-    public ?int $elementId= null;
-    public ?string $elementType= null;
-    public ?int $siteId= null;
+    public ?int $elementId = null;
+    public ?string $elementType = null;
+    public ?int $siteId = null;
     public int $hits = 0;
 
 

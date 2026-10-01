@@ -64,7 +64,7 @@ class Shortcut extends Plugin
     {
         return Craft::$app->getResponse()->redirect(UrlHelper::cpUrl('shortcut/settings'));
     }
-    
+
 
     // Protected Methods
     // =========================================================================
