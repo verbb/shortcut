@@ -20,6 +20,7 @@ use craft\helpers\Db;
 use craft\helpers\StringHelper;
 
 use yii\base\Exception;
+use yii\db\Expression;
 
 class Service extends Component
 {
@@ -138,10 +139,28 @@ class Service extends Component
     {
         ++$shortcut->hits;
 
-        $this->saveShortcut($shortcut);
+        if (!$shortcut->id) {
+            $this->saveShortcut($shortcut);
+            return;
+        }
+
+        if (!$shortcut->validate()) {
+            return;
+        }
+
+        // Avoid Craft's automatic timestamp update so public traffic only mutates the counter.
+        $updatedRows = Db::update('{{%shortcut_shortcuts}}', [
+            'hits' => new Expression('[[hits]] + 1'),
+        ], [
+            'id' => $shortcut->id,
+        ], [], false);
+
+        if ($updatedRows !== 1) {
+            throw new Exception('No shortcut record with ID ' . $shortcut->id . ' was found.');
+        }
     }
 
-    public function saveShortcut(Shortcut $shortcut): void
+    public function saveShortcut(Shortcut $shortcut, bool $saveHits = true): void
     {
         $isNew = !$shortcut->id;
 
@@ -169,7 +188,11 @@ class Service extends Component
             $record->provider = $shortcut->provider;
             $record->externalUrl = $shortcut->externalUrl;
             $record->siteId = $shortcut->siteId;
-            $record->hits = $shortcut->hits;
+
+            if ($saveHits) {
+                $record->hits = $shortcut->hits;
+            }
+
             $record->elementId = $shortcut->elementId;
             $record->elementType = $shortcut->elementType;
 
@@ -195,7 +218,8 @@ class Service extends Component
             $shortcut->urlHash = $this->_hashForUrl($shortcut->url, $shortcut->elementId, $shortcut->siteId, $provider);
             $shortcut->externalUrl = '';
 
-            $this->saveShortcut($shortcut);
+            // Preserve counters that can change while the destination update is being processed.
+            $this->saveShortcut($shortcut, false);
         }
     }
 

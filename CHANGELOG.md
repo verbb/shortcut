@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- Fixed a low-severity race condition vulnerability.
+
 ## 5.0.7 - 2026-09-30
 
 ### Changed
