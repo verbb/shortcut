@@ -2,7 +2,6 @@
 namespace verbb\shortcut\migrations;
 
 use craft\db\Migration;
-use craft\helpers\MigrationHelper;
 
 class Install extends Migration
 {
@@ -64,7 +63,8 @@ class Install extends Migration
     public function dropForeignKeys(): void
     {
         if ($this->db->tableExists('{{%shortcut_shortcuts}}')) {
-            MigrationHelper::dropAllForeignKeysOnTable('{{%shortcut_shortcuts}}', $this);
+            $this->dropForeignKeyIfExists('{{%shortcut_shortcuts}}', 'siteId');
+            $this->dropForeignKeyIfExists('{{%shortcut_shortcuts}}', 'elementId');
         }
     }
 }
