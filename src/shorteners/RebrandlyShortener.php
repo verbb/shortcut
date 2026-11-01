@@ -8,8 +8,19 @@ use craft\helpers\App;
 
 class RebrandlyShortener implements ShortenerInterface
 {
+    // Properties
+    // =========================================================================
+
+    private Settings $settings;
+
+
     // Public Methods
     // =========================================================================
+
+    public function __construct(Settings $settings)
+    {
+        $this->settings = $settings;
+    }
 
     public function shorten(string $url): string
     {

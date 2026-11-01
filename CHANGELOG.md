@@ -4,6 +4,7 @@
 
 ### Fixed
 - Fixed an error when creating a shortcut for an element without a URL, or saving an element whose URL has been removed.
+- Fixed an error when shortening URLs with Bitly, Rebrandly or Short.io.
 
 ## 5.0.10 - 2026-10-15
 
