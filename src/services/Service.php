@@ -65,7 +65,7 @@ class Service extends Component
 
         if (isset($options['element'])) {
             $element = $options['element'];
-            $url = $element->getUrl();
+            $url = (string)$element->getUrl();
 
             $model->elementId = $element->id;
             $model->elementType = get_class($element);
@@ -141,6 +141,7 @@ class Service extends Component
 
         if (!$shortcut->id) {
             $this->saveShortcut($shortcut);
+
             return;
         }
 
@@ -212,9 +213,12 @@ class Service extends Component
         $provider = $this->_currentProvider();
         $shortcut = $this->getByElementId($element->id, $element->siteId, $provider);
 
+        // Elements without a URL are stored with an empty one
+        $url = (string)$element->getUrl();
+
         // Check if we should update the url
-        if ($shortcut && $element->getUrl() !== $shortcut->url) {
-            $shortcut->url = $element->getUrl();
+        if ($shortcut && $url !== $shortcut->url) {
+            $shortcut->url = $url;
             $shortcut->urlHash = $this->_hashForUrl($shortcut->url, $shortcut->elementId, $shortcut->siteId, $provider);
             $shortcut->externalUrl = '';
 
