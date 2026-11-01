@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 5.0.11 - 2026-11-01
 
 ### Fixed
 - Fixed an error when creating a shortcut for an element without a URL, or saving an element whose URL has been removed.
