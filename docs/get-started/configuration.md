@@ -12,7 +12,7 @@ return [
 ];
 ```
 
-All other settings keep their defaults. Add any further settings you want to change to the same array. The options below explain the available settings and their defaults.
+All other settings keep their defaults. Add any further settings you want to change to the same array. The options below explain the available settings and their defaults. You can also manage these settings in the control panel under **Settings → Shortcut**.
 
 ## Configuration Options
 
@@ -103,7 +103,3 @@ A Short.io API key, required when `provider` is set to `shortio`. Environment va
 
 A Short.io domain, required when `provider` is set to `shortio`. Environment variables are supported.
 :::
-
-
-## Control Panel
-You can also manage configuration settings through the Control Panel by visiting Settings → Shortcut.
